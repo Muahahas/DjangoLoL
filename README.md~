@@ -1,23 +1,15 @@
 # DjangoLoL
 Gestio d'una competicio de League of Legends
 
-	User:admin
-	Pass:1234
+User:admin
+Pass:1234
 
 #Models Creats:
- 	TOTS
-	(Almenys atributs basics)
+  TOTS
+  (Almenys atributs basics)
 
 #HTML:
-	- INDEX
-	- nou_usuari
-	- base
-	- equipform ("nou Equip")
-	- ingresar ("login"),
-	- noactivo("Error usuari bann"),
-	- nousuario("usuari no registrat"),
-	- privado ("Mi cuenta"),
-	- teamokey("Equip creat")
+  INDEX, nou_usuari, base, equipform ("nou Equip"), ingresar ("login"), noactivo("Error usuari bann"), nousuario("usuari no registrat"), privado ("Mi cuenta"), teamokey("Equip creat")
   
 #Views:
 	- Index

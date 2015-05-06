@@ -64,12 +64,12 @@ def cerrar(request):
 
 def nuevo_equipo(request):
 	if request.method=='POST':
-		formulario = EquipForm(request.POST, request.FILES)
+		formulario = nouEquip(request.POST, request.FILES)
 		if formulario.is_valid():
 			equip = formulario.save()
 			return render_to_response('competition/teamokey.html',{'equip':equip})
 			
 	else:
-		formulario = EquipForm()
+		formulario = nouEquip()
 	return render_to_response('competition/equipform.html',{'formulario':formulario},context_instance=RequestContext(request))
 

@@ -3,8 +3,12 @@ from models import *
 
 # Register your models here.
 
+class EquipAdmin(admin.ModelAdmin):
+	list_display = ["__unicode__","email"]
+	fieldsets = [(None,{'fields':['username','email','password']})]
+
 admin.site.register(Jugador)
-admin.site.register(Equip)
+admin.site.register(Equip,EquipAdmin)
 admin.site.register(Lliga)
 admin.site.register(Jornada)
 admin.site.register(Partida)

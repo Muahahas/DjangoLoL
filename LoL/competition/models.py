@@ -5,11 +5,11 @@ from django.contrib import auth
 # Create your models here.
 
 class Equip(auth.models.User):
-	name = models.CharField(max_length=25,unique=True)
+	#name = models.CharField(max_length=25,unique=True)
 	#password = models.CharField(max_length=10)
 
 	def __unicode__(self):
-		return u'Team ' + self.name 
+		return u'Team ' + super(self.__class__, self).get_username()
 
 
 
