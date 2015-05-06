@@ -1,6 +1,6 @@
 from django.shortcuts import render, render_to_response, RequestContext
 from django.utils import timezone
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView
 from models import *
 
@@ -23,13 +23,15 @@ def nuevo_usuario(request):
 		formulario = UserCreationForm(request.POST)
 		if formulario.is_valid:
 			formulario.save()
-			return render_to_response('competition/index.html')
+			HttpResponseRedirect('competition/index.html')
 	else:
 		formulario = UserCreationForm()
 	return render_to_response('competition/nuevousuario.html',{'formulario':formulario}, context_instance=RequestContext(request))
 
 
 def loginUser(request):
+	if not request.user.is_anonymous():
+		return HttpResponseRedirect('/privado')
 	if request.method == 'POST':
 		formulario = AuthenticationForm(request.POST)
 		if formulario.is_valid:
@@ -39,7 +41,7 @@ def loginUser(request):
 			if acceso is not None:
 				if acceso.is_active:
 					login(request, acceso)
-					return HttpResponse('/privado')
+					return HttpResponseRedirect('competition/privado')
 				else:
 					return render_to_response('competition/noactivo.html', context_instance=RequestContext(request))
 			else:
@@ -47,3 +49,15 @@ def loginUser(request):
 	else:
 		formulario = AuthenticationForm()
 	return render_to_response('competition/ingresar.html',{'formulario':formulario}, context_instance=RequestContext(request))
+
+
+@login_required(login_url='/login')
+def privado(request):
+		usuario = request.user
+		return render_to_response('competition/privado.html', {'usuario':usuario}, context_instance=RequestContext(request))
+
+
+@login_required(login_url='/login')
+def cerrar(request):
+	logout(request)
+	return HttpResponseRedirect('/')
