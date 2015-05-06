@@ -24,7 +24,7 @@ Gestio d'una competicio de League of Legends
 	- NouUsuari
 	- login
 	- logout
-	- nouEquip, 
+	- nouEquip
 
 #URLS:
 
@@ -33,6 +33,16 @@ Gestio d'una competicio de League of Legends
 	/privado
 	/cerrar
 	/teamregister
+	
+#SPRINT ACTUAL:
+
+	Generar horari ( Complicat... algorisme i ha de determinar les hores de les partides i enllaçar partides jornades equips.... )
+	Recontar inscripcions(amb un queryset = objects.all().lenght o semblant )
+	Enviar informació
+	Registre equip(Falta registrar jugadors pero casi xD)
+	Comprobaciò usuaris(Fer una funcio)
+	Generar documents XML(Com a la prac de SITW)
+
   
   
 #Errors a corregir
