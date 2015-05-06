@@ -8,4 +8,5 @@ urlpatterns = patterns('',
 	url(r'^login','competition.views.loginUser'),
 	url(r'^privado','competition.views.privado'),
 	url(r'^cerrar','competition.views.cerrar'),
+	url(r'^teamregister','competition.views.nuevo_equipo'),
 )

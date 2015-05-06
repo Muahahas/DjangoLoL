@@ -1,14 +1,15 @@
 from django.db import models
 import datetime
 from django.utils import timezone
+from django.contrib import auth
 # Create your models here.
 
-class Equip(models.Model):
-	name = models.CharField(max_length=25)
-	password = models.CharField(max_length=10)
+class Equip(auth.models.User):
+	name = models.CharField(max_length=25,unique=True)
+	#password = models.CharField(max_length=10)
 
 	def __unicode__(self):
-		return u'Team' + self.name 
+		return u'Team ' + self.name 
 
 
 
