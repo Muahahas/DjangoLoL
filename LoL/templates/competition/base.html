@@ -1,0 +1,24 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{% static "style/base.css" %}" />
+        <title>{% block title %}LOL{% endblock %}</title>
+    </head>
+
+    <body>
+
+        
+
+        <div id="content">
+            {% block content %}
+                {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            {% endblock %}
+        </div>
+
+        <div id="footer">
+            {% block footer %}{% endblock %}
+        </div>
+
+    </body>
+</html>

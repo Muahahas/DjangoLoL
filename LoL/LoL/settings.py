@@ -55,6 +55,12 @@ ROOT_URLCONF = 'LoL.urls'
 WSGI_APPLICATION = 'LoL.wsgi.application'
 
 
+
+#Templates and DIRS
+
+TEMPLATE_DIRS = [os.path.join(BASE_DIR,'templates')]
+
+
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
