@@ -1,0 +1,12 @@
+{% extends 'competition/base.html' %}
+{% block header %}Ingresa al sistema{% endblock %}
+{% block content %}
+	{% block encabezado %}
+		<h1>Ingresa</h1>
+	{% endblock %}
+	<form id='formulario' method='post' action=''>{% csrf_token %}
+		<table>{{formulario}}</table>
+		<p><input type='submit' value='Ingresar'></p>
+
+	</form>
+{% endblock %}

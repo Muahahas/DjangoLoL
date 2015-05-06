@@ -1,0 +1,8 @@
+{% extends 'competition/base.html' %}
+{% block header %}Nuevo Equipo{% endblock %}
+{% block content %}
+	<form id='formulario' method='post' action = ''>{% csrf_token %}
+	<table>{{formulario}}</table>
+	<p><input type="submit" value='Registrar'/></p>
+	</form>
+{% endblock %}

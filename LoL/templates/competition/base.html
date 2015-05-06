@@ -7,11 +7,19 @@
     </head>
 
     <body>
-    <div id="encabezado">
-            {% block encabezado %}
-                {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-            {% endblock %}
-    </div>
+    <header>
+        
+        <nav>
+        <ul id='menu'>
+            <li><a href='/'>Inicio</a></li>
+            <li><a href='/usuario/nuevo'>Registro</a></li>
+            <li><a href='/login'>Login</a></li>
+            <li><a href='/admin'>Admin</a></li>  
+        </ul>
+            </nav>
+            <hr>
+            {% block header %}{% endblock %}
+    </header>    
         
 
         <div id="content">
