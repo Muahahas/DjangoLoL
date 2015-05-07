@@ -25,7 +25,7 @@ Gestio d'una competicio de League of Legends
 	- NouUsuari
 	- login
 	- logout
-	- nouEquip, 
+	- nouEquip
 
 #URLS:
 
@@ -34,12 +34,26 @@ Gestio d'una competicio de League of Legends
 	/privado
 	/cerrar
 	/teamregister
+<<<<<<< HEAD
   
  
 
 
 
 
+=======
+	
+#SPRINT ACTUAL:
+
+	Generar horari ( Complicat... algorisme i ha de determinar les hores de les partides i enllaçar partides jornades equips.... )
+	Recontar inscripcions(amb un queryset = objects.all().lenght o semblant )
+	Enviar informació
+	Registre equip(Falta registrar jugadors pero casi xD)
+	Comprobaciò usuaris(Fer una funcio)
+	Generar documents XML(Com a la prac de SITW)
+
+  
+>>>>>>> e1e2c6e82e76e5980ae620cf9d448d90776c70ba
 #Errors a corregir
 Al crear un jugador, no se com passar el equip, nomes li puc passar l'user. I per aixo esta cambiat al model la foreignkey d'equip.
 El problema es que s'asigna a un user i no a un equip.
