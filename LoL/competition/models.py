@@ -5,13 +5,11 @@ from django.contrib import auth
 # Create your models here.
 
 class Equip(auth.models.User):
-	#name = models.CharField(max_length=25,unique=True)
-	#password = models.CharField(max_length=10)
-
+	def email():
+		email = models.EmailField(null=False)
+		return email
 	def __unicode__(self):
 		return u'Team ' + super(self.__class__, self).get_username()
-
-
 
 class Jugador(models.Model):
 	ROL_CHOICES = (
@@ -24,9 +22,9 @@ class Jugador(models.Model):
 
 	name = models.CharField(max_length=50)
 	rol =  models.CharField(max_length=3, choices=ROL_CHOICES)
-	correu = models.EmailField(max_length=50)
+	#correu = models.EmailField(max_length=50)
 	top = models.BooleanField(default=False)
-	team = models.ForeignKey(Equip)
+	team = models.ForeignKey(auth.models.User)
 
 	def __unicode__(self):
 		return u"%s" % self.name

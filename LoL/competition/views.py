@@ -1,7 +1,7 @@
 from django.shortcuts import render, render_to_response, RequestContext
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from models import *
 from forms import *
 
@@ -73,3 +73,20 @@ def nuevo_equipo(request):
 		formulario = nouEquip()
 	return render_to_response('competition/equipform.html',{'formulario':formulario},context_instance=RequestContext(request))
 
+@login_required(login_url='/login')
+def nuevo_jugador(request):
+	equip = request.user
+	#idT = request.user.id
+	if request.method=='POST':
+		formulario = jugadorForm(equip,request.POST)
+		if formulario.is_valid():
+			formulario.save()
+			return HttpResponseRedirect('/')
+	else:
+		formulario = jugadorForm(equip)
+	return render_to_response('competition/jugadorform.html',{'formulario':formulario}, context_instance=RequestContext(request))
+
+class recountInsc(ListView):
+	queryset = Equip.objects.count()
+	context_object_name='total'
+	template_name='competition/recount.html'

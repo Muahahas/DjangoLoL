@@ -8,12 +8,13 @@
 
     <body>
     <header>
-        
+        {% block header %}{% endblock %}
         <nav>
         <ul id='menu'>
             <li><a href='/'>Inicio</a></li>
             <!--<li><a href='/register'>Registro</a></li>-->
             <li><a href='/teamregister'>Registrar equip</a></li>
+            <li><a href='/playerregister'>Registrar jugador</a></li>
             <li><a href='/login'>Login</a></li>
             <li><a href='/cerrar'>Logout</a></li>
             <li><a href='/privado'>Panel Privado</a></li>
@@ -22,7 +23,7 @@
         </ul>
             </nav>
             <hr>
-            {% block header %}{% endblock %}
+            
     </header>    
         
 

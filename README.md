@@ -7,6 +7,7 @@ Gestio d'una competicio de League of Legends
 #Models Creats:
  	TOTS
 	(Almenys atributs basics)
+	#RECORDATORI: Modificar foriegnkey de jugador a equip (es User a de ser Equip)
 
 #HTML:
 	- INDEX
@@ -34,8 +35,15 @@ Gestio d'una competicio de League of Legends
 	/cerrar
 	/teamregister
   
-  
+ 
+
+
+
+
 #Errors a corregir
+Al crear un jugador, no se com passar el equip, nomes li puc passar l'user. I per aixo esta cambiat al model la foreignkey d'equip.
+El problema es que s'asigna a un user i no a un equip.
+
 #( JA ESTAN ARREGLATS PERO SON PUNTS A REVISAR PER SI N'HI HA MES COM AQUETS )
 Si l'usuari ja esta registrat el codi "peta", si es fa desde crear equip no.
 Desde crear equip demana dos cops un nom, el nom del equip i el del user, HAURIA DE SER EL MATEIX

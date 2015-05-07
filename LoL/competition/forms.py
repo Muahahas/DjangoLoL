@@ -1,14 +1,29 @@
 from django.forms import ModelForm
 from django import forms
-from competition.models import Equip
+from competition.models import Equip, Jugador
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 
-class EquipForm(ModelForm):
+"""class EquipForm(ModelForm):
 	class Meta:
 		model = Equip
 		exclude = ['groups','user_permissions','is_staff','is_active','is_superuser','last_login','date_joined']
+"""
+class jugadorForm(ModelForm):
+	class Meta:
+		model = Jugador
+		exclude=['top','team']
 
+	def __init__(self, usuario, *args):
+		super(jugadorForm,self).__init__(*args)
+		self.equip = usuario
+
+	def save(self, commit=True):
+		jugador = super(jugadorForm, self).save(commit=False)
+		jugador.team = self.equip
+		if commit:
+				jugador.save()
+		return jugador
 
 class nouEquip(ModelForm):
 
