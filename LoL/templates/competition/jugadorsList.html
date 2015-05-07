@@ -1,0 +1,13 @@
+{% extends "competition/base.html" %}
+{% block header %}Jugadors{% endblock %}
+{% block content %}
+<h1>
+	Jugadors </h1>
+<ul>
+	{% for item in listJugadors %}
+	<li>{{item}}</li>
+	{% empty %} Cap jugador inscrit.
+	{% endfor %}
+	
+</ul>
+{% endblock %}

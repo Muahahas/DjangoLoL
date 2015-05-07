@@ -9,18 +9,17 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 		model = Equip
 		exclude = ['groups','user_permissions','is_staff','is_active','is_superuser','last_login','date_joined']
 """
-class jugadorForm(ModelForm):
+class jugadorForm(ModelForm):	
 	class Meta:
 		model = Jugador
 		exclude=['top','team']
-
-	def __init__(self, usuario, *args):
+	def __init__(self, *args):
 		super(jugadorForm,self).__init__(*args)
-		self.equip = usuario
+		self.team = None
 
 	def save(self, commit=True):
 		jugador = super(jugadorForm, self).save(commit=False)
-		jugador.team = self.equip
+		jugador.team = self.team
 		if commit:
 				jugador.save()
 		return jugador

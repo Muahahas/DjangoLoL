@@ -11,14 +11,19 @@
         {% block header %}{% endblock %}
         <nav>
         <ul id='menu'>
-            <li><a href='/'>Inicio</a></li>
             <!--<li><a href='/register'>Registro</a></li>-->
-            <li><a href='/teamregister'>Registrar equip</a></li>
-            <li><a href='/playerregister'>Registrar jugador</a></li>
-            <li><a href='/login'>Login</a></li>
-            <li><a href='/cerrar'>Logout</a></li>
+            <li><a href='/'>Inicio</a></li>
+            {% if user.is_staff %}
+            <li><a href='/admin'>Super Admin Mode</a></li>
             <li><a href='/privado'>Panel Privado</a></li>
-            <li><a href='/admin'>Admin</a></li>
+            <li><a href='/cerrar'>Logout</a></li>
+            {% elif user.username %}
+            <li><a href='/privado'>Panel Privado</a></li>          
+            <li><a href='/cerrar'>Logout</a></li>
+            {% else %}
+            <li><a href='/teamregister'>Registrar equip</a></li>
+            <li><a href='/login'>Login</a></li>
+            {% endif %}            
 
         </ul>
             </nav>

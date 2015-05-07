@@ -18,6 +18,7 @@ class indexView(ListView):
 	template_name = 'competition/index.html'
 	queryset=Equip.objects.all()
 
+#No s'utilitza
 def nuevo_usuario(request):
 	if request.method=='POST':
 		formulario = UserCreationForm(request.POST)
@@ -62,21 +63,41 @@ def cerrar(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
+#Nomes registra equip
 def nuevo_equipo(request):
 	if request.method=='POST':
 		formulario = nouEquip(request.POST, request.FILES)
 		if formulario.is_valid():
 			equip = formulario.save()
+			request.equip = equip
 			return render_to_response('competition/teamokey.html',{'equip':equip})
 			
 	else:
 		formulario = nouEquip()
 	return render_to_response('competition/equipform.html',{'formulario':formulario},context_instance=RequestContext(request))
 
+#Registra equip i jugadors:
+def nuevo_equipo_jugador(request):
+	if request.method=='POST':
+		form_team = nouEquip(request.POST, request.FILES)
+		form_player = jugadorForm(request.POST, request.FILES)
+		if form_team.is_valid():
+			equip = form_team.save()
+			form_player.team = equip
+			if form_player.is_valid():
+				form_player.save()
+				return render_to_response('competition/teamokey.html',{'equip':equip})
+	else:
+		form_team = nouEquip()
+		form_player = jugadorForm()
+	return render_to_response('competition/equipform.html',{'form_team':form_team,'form_player':form_player},context_instance=RequestContext(request))
+
+
+
+
 @login_required(login_url='/login')
 def nuevo_jugador(request):
-	equip = request.user
-	#idT = request.user.id
+	equip = Equip.objects.get(username__iexact = unicode(request.user.username))
 	if request.method=='POST':
 		formulario = jugadorForm(equip,request.POST)
 		if formulario.is_valid():
@@ -87,6 +108,30 @@ def nuevo_jugador(request):
 	return render_to_response('competition/jugadorform.html',{'formulario':formulario}, context_instance=RequestContext(request))
 
 class recountInsc(ListView):
-	queryset = Equip.objects.count()
+	#totsEquips = Equip.objects.all()
+	#queryset = totsEquips.count()
 	context_object_name='total'
 	template_name='competition/recount.html'
+	def __init__(self):
+		self.totsEquips = Equip.objects.all()
+		self.queryset = self.totsEquips.count()
+	
+
+class jugadorsInscrits(ListView):
+	pass
+	"""
+	equip = Equip
+	queryset = Jugador.objects.filter(team = equip)
+	context_instance = 'listJugadors'
+	template_name='competition/jugadorsList.html'
+
+	def __init__(self,request,*args):
+		super(jugadorsInscrits,self).__init__(*args)
+		self.equip = Equip.objects.get(username__iexact=unicode(request.user.username))
+
+		
+		queryset = Equip.objects.filter(team = equipAux)
+		context_instance = 'listJugadors'
+		template_name='competition/jugadorsList.html'
+
+"""

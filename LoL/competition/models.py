@@ -6,7 +6,7 @@ from django.contrib import auth
 
 class Equip(auth.models.User):
 	def email():
-		email = models.EmailField(null=False)
+		email = models.EmailField(null=False,unique=True)
 		return email
 	def __unicode__(self):
 		return u'Team ' + super(self.__class__, self).get_username()
@@ -22,9 +22,8 @@ class Jugador(models.Model):
 
 	name = models.CharField(max_length=50)
 	rol =  models.CharField(max_length=3, choices=ROL_CHOICES)
-	#correu = models.EmailField(max_length=50)
 	top = models.BooleanField(default=False)
-	team = models.ForeignKey(auth.models.User)
+	team = models.ForeignKey(Equip)
 
 	def __unicode__(self):
 		return u"%s" % self.name

@@ -6,7 +6,11 @@
 </h1>
 <ul>
 	<li><a href ='/recount'>Recompte Equips</a></li>
+	{% if user.username %}
+	<li>Jugadors</li>
+	{% else %}
 	<li>2</li>
+	{% endif %}
 	<li>3</li>
 	
 </ul>
