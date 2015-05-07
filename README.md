@@ -44,7 +44,6 @@ Gestio d'una competicio de League of Legends
 	Generar documents XML(Com a la prac de SITW)
 
   
-  
 #Errors a corregir
 #( JA ESTAN ARREGLATS PERO SON PUNTS A REVISAR PER SI N'HI HA MES COM AQUETS )
 Si l'usuari ja esta registrat el codi "peta", si es fa desde crear equip no.
