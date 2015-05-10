@@ -46,13 +46,17 @@ Gestio d'una competicio de League of Legends
 #SPRINT ACTUAL:
 
 	Generar horari ( Complicat... algorisme i ha de determinar les hores de les partides i enllaçar partides jornades equips.... )
-	Recontar inscripcions(amb un queryset = objects.all().lenght o semblant )
-	Enviar informació
-	Registre equip(Falta registrar jugadors pero casi xD)
-	Comprobaciò usuaris(Fer una funcio)
+	Recontar inscripcions(FET(Es mostren el numero i el llistat, pero nomes amb l'user, tot i aixi es pot deshabilitar))
+	Enviar informació(Enviar un mail? Amb aixo n'hi ha prou?)
+	Registre equip(Faltaria arreglar que mires que no hi hagi cap jugador amb el mateix nom(de moment a la BD el nom no esta unique per a testejar millor))
+	Comprobaciò usuaris(Ha d'enviar cridant la funcio enviar info. esperar un OK o no i fer algo al respecte)
 	Generar documents XML(Com a la prac de SITW)
 
 #Errors a corregir
+
+
+
+(Solucionat)
 Nomes mostre un formulari d'un jugador, hauria de mostrar el dels 5 i obligar a que es fiquin els 5.
 Arreglar mostrar jugadors de l'equip dsde l'index.
 
