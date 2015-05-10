@@ -9,12 +9,19 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 		model = Equip
 		exclude = ['groups','user_permissions','is_staff','is_active','is_superuser','last_login','date_joined']
 """
-class jugadorForm(ModelForm):	
+
+class jugadorForm(ModelForm):
 	class Meta:
+		team = None
 		model = Jugador
-		exclude=['top','team']
-	def __init__(self, *args):
-		super(jugadorForm,self).__init__(*args)
+		exclude=['top','team',]
+
+	def __init__(self, *args, **kwargs):
+		#prefix = kwargs.pop('prefix',None)
+		#if prefix != None:
+		#	super(jugadorForm,self).__init__(*args,**kwargs)
+		#else:
+		super(jugadorForm,self).__init__(*args,**kwargs)
 		self.team = None
 
 	def save(self, commit=True):
@@ -23,6 +30,7 @@ class jugadorForm(ModelForm):
 		if commit:
 				jugador.save()
 		return jugador
+
 
 class nouEquip(ModelForm):
 

@@ -4,8 +4,8 @@
 <h1>
 	Jugadors </h1>
 <ul>
-	{% for item in listJugadors %}
-	<li>{{item}}</li>
+	{% for item in llista %}
+	<li>Jugador: {{item}} Rol: {{ item.rol }}</li>
 	{% empty %} Cap jugador inscrit.
 	{% endfor %}
 	

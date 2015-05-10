@@ -16,7 +16,7 @@ class Jugador(models.Model):
 		('Top','Top'),
 		('ADC', 'AD Carry'),
 		('Sup','Support'),
-		('Jung','Jungle'),
+		('Jun','Jungle'),
 		('Mid','Middle'),
 	)
 
@@ -27,6 +27,7 @@ class Jugador(models.Model):
 
 	def __unicode__(self):
 		return u"%s" % self.name
+
 
 class Lliga(models.Model):
 	codi = models.IntegerField(default=0)

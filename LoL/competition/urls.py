@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from django.views.generic import ListView
-from views import indexView, recountInsc, jugadorsInscrits
+from views import indexView, recountInsc
 
 urlpatterns = patterns('',
 	url(r'^$', indexView.as_view()),
@@ -11,5 +11,5 @@ urlpatterns = patterns('',
 	url(r'^teamregister','competition.views.nuevo_equipo_jugador'),
 	url(r'^playerregister','competition.views.nuevo_jugador'),
 	url(r'^recount',recountInsc.as_view()),
-	url(r'^jugadors','competition.views.jugadorsInscrits'),
+	url(r'^jugadors','competition.views.inscrits'),
 )
