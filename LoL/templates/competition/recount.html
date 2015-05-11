@@ -4,5 +4,12 @@
 	{% block encabezado %}
 		<h1>Recompte d'equips</h1>
 	{% endblock %}
-	<p>El numero d'equips inscrits fins ara es: {{total}}</p>	
+	<p>El numero d'equips inscrits fins ara es: {{total.count}}</p>	
+	{% if user.is_staff %}
+	<ul>
+		{% for team in total %}
+		<li>Equip {{team}}</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
 {% endblock %}

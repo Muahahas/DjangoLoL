@@ -47,7 +47,7 @@ Gestio d'una competicio de League of Legends
 
 	Generar horari ( Complicat... algorisme i ha de determinar les hores de les partides i enllaçar partides jornades equips.... )
 	Recontar inscripcions(FET(Es mostren el numero i el llistat, pero nomes amb l'user, tot i aixi es pot deshabilitar))
-	Enviar informació(Enviar un mail? Amb aixo n'hi ha prou?)
+	Enviar informació(Enviar un mail?FET Amb aixo n'hi ha prou?)
 	Registre equip(Faltaria arreglar que mires que no hi hagi cap jugador amb el mateix nom(de moment a la BD el nom no esta unique per a testejar millor))
 	Comprobaciò usuaris(Ha d'enviar cridant la funcio enviar info. esperar un OK o no i fer algo al respecte)
 	Generar documents XML(Com a la prac de SITW)

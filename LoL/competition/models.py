@@ -5,20 +5,21 @@ from django.contrib import auth
 # Create your models here.
 
 class Equip(auth.models.User):
-	def email():
-		email = models.EmailField(null=False,unique=True)
-		return email
+	
+	correoe = models.EmailField('email',null=False,unique=True,)
+		
+
 	def __unicode__(self):
 		return u'Team ' + super(self.__class__, self).get_username()
 
 class Jugador(models.Model):
-	ROL_CHOICES = (
+	ROL_CHOICES = [
 		('Top','Top'),
 		('ADC', 'AD Carry'),
 		('Sup','Support'),
 		('Jun','Jungle'),
 		('Mid','Middle'),
-	)
+	]
 
 	name = models.CharField(max_length=50)
 	rol =  models.CharField(max_length=3, choices=ROL_CHOICES)

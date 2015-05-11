@@ -12,4 +12,5 @@ urlpatterns = patterns('',
 	url(r'^playerregister','competition.views.nuevo_jugador'),
 	url(r'^recount',recountInsc.as_view()),
 	url(r'^jugadors','competition.views.inscrits'),
+	url(r'^enviarmisatge','competition.views.enviarInfo'),
 )

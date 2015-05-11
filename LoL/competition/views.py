@@ -7,6 +7,7 @@ from forms import *
 from django.forms.models import inlineformset_factory
 from django.forms.formsets import formset_factory
 import unicodedata
+from django.core.mail import EmailMessage
 
 
 
@@ -62,6 +63,7 @@ def loginUser(request):
 def privado(request):
 	usuario = request.user
 	return render_to_response('competition/privado.html', {'usuario':usuario}, context_instance=RequestContext(request))
+
 
 
 @login_required(login_url='/login')
@@ -124,7 +126,7 @@ def nuevo_equipo_jugador(request):
 		#requestForm2 = request.POST.copy()
 		#requestForm2.__setitem__('name',names.pop(0))
 		form_team = nouEquip(request.POST, request.FILES,)
-		form_player_list = [jugadorForm(requestForm.pop(),request.FILES,) for count in xrange(5)]
+		form_player_list = [jugadorForm(requestForm.pop(0),request.FILES,) for count in xrange(5)]
 
 		#form1 = jugadorForm(requestForm.pop(), request.FILES, prefix='form-1')
 		#form2 = jugadorForm(requestForm.pop(), request.FILES ,prefix='form-2')
@@ -171,28 +173,69 @@ class recountInsc(ListView):
 	context_object_name='total'
 	template_name='competition/recount.html'
 	def __init__(self):
-		self.totsEquips = Equip.objects.all()
-		self.queryset = self.totsEquips.count()
-"""	
-@login_required(login_url='/login')
-class jugadorsInscrits(ListView):
-	queryset = Jugador.objects.filter(team = None)
-	equip = Equip
-	context_object_name = 'listJugadors'
-	template_name='competition/jugadorsList.html'
+		self.queryset = Equip.objects.all()
+		#self.queryset = self.totsEquips.count()
 
-	def __init__(self, request, *args, **kwargs):
-		request = kwargs.pop('request',None)
-		#nom = request.user.username
-		self.equip = Equip.objects.get(username__iexact=unicode(self.request.user.username))		
-		queryset = Jugador.objects.filter(team = self.equip)
-		context_object_name = 'listJugadors'
-		template_name='competition/jugadorsList.html'
 
-"""
 @login_required(login_url='/login')
 def inscrits(request):
-	equip = Equip.objects.get(username__iexact=unicode(request.user.username))
-	llista = Jugador.objects.filter(team = equip)	
+	if request.user.is_staff:
+		llista = []
+	else:
+		equip = Equip.objects.get(username__iexact=unicode(request.user.username))
+		llista = Jugador.objects.filter(team = equip)	
 	#template_name = 'competition/jugadorsList.html'
 	return render_to_response('competition/jugadorsList.html',{'llista':llista}, context_instance=RequestContext(request))
+
+
+
+
+def enviarInfo(request):
+	if request.method=='POST':
+		formulario = email(request.POST,request.FILES)
+		if formulario.is_valid():
+			subject = request.POST.__getitem__('asunto')
+			body = request.POST.__getitem__('mensaje')
+			from_email = request.POST.__getitem__('remitente')
+			to = [request.POST.__getitem__('destinatari')]
+			attach = request.POST.__getitem__('attach')
+
+			if attach :
+				imail = EmailMessage(subject,body,from_email,to,attachments=attach)
+				#return HttpResponse("Attach")
+			else:
+				imail = EmailMessage(subject,body,from_email,to)
+				#return HttpResponse("No attach")
+			try:
+				imail.send()
+				return HttpResponse('Enviat')
+			except:
+				return HttpResponse('Error')
+	else:
+		formulario = email()
+	return render_to_response('competition/enviarinfo.html',{'formulario':formulario},context_instance=RequestContext(request))
+
+
+
+
+
+#def enviarInfo(request):
+#	if request.method=='POST':
+#		formulario = email(request.POST,request.FILES)
+#		if formulario.is_valid():
+#			mail = """From: %s
+#			To: %s
+#			MIME-Version: 1.0
+#			Content-type: text/html
+#			Subject: %s
+#			%s
+#			""" % (request.POST.__getitem__('remitente'), request.POST.__getitem__('destinatari'), request.POST.__getitem__('asunto'), request.POST.__getitem__('mensaje'))
+#			try:
+#				smtp = smtplib.SMTP('localhost')
+#				smtp.sendmail(request.POST.__getitem__('remitente'), request.POST.__getitem__('destinatari'), email)
+#				return HttpResponse('Enviat')
+#			except:
+#				return HttpResponse('ERROR AL ENVIAR EL MISSATGE')
+#	else:
+#		formulario = email()
+#	return render_to_response('competition/enviarinfo.html',{'formulario':formulario},context_instance=RequestContext(request))
