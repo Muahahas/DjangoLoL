@@ -5,7 +5,7 @@ from models import *
 
 class EquipAdmin(admin.ModelAdmin):
 	list_display = ["__unicode__","email"]
-	fieldsets = [(None,{'fields':['username','email','password']})]
+	fieldsets = [(None,{'fields':['username','email','password','isTeamValid']})]
 
 admin.site.register(Jugador)
 admin.site.register(Equip,EquipAdmin)

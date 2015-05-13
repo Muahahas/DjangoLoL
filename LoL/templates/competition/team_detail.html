@@ -1,0 +1,24 @@
+{% extends "competition/base.html" %}
+{% block header %}Info Equip{% endblock %}
+{% block content %}
+<h1>
+	{{ equip }}
+</h1>
+<h2>Jugadors:</h2>
+<ul>
+	{% for item in equip.jugador_set.all %}
+	<li> {{item}} </li>
+	{% endfor %}
+</ul>
+</br>
+</br>
+{% if equip.isTeamValid %}
+<p>L'equip esta validat!</p>
+<p><a href="{% url 'competition:validate_team' equip.id %}" >Desvalidate</a></p>
+{% else %}
+<p>L'equip encara esta pendent d'activar.</p>
+<p><a href="{% url 'competition:validate_team' equip.id %}" >Validate</a></p>
+{% endif %}
+
+
+{% endblock %}

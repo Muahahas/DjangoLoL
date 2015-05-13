@@ -4,4 +4,11 @@
 	<h1>Bienvenido</h1>
 	<p>Bienvenido {{usuario.username|upper}}, la ultima vez que te vimos fue el {{usuario.last_login}}.</p>
 	<p>Eres miembro desde el {{usuario.date_joined}}</p>
+	{% if not user.is_staff %}
+		{% if not equip.isTeamValid %}
+			<p>L'equip encara esta pendent de validar-se<p>
+		{% else %}
+			<p>L'equip esta validat per tant podra jugar a la competició</p>
+		{% endif %}
+	{% endif %}
 {% endblock %}

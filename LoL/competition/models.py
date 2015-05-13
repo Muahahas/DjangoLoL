@@ -7,10 +7,19 @@ from django.contrib import auth
 class Equip(auth.models.User):
 	
 	correoe = models.EmailField('email',null=False,unique=True,)
+	isTeamValid = models.BooleanField(default=False)
 		
 
 	def __unicode__(self):
 		return u'Team ' + super(self.__class__, self).get_username()
+	
+	def validat(self):
+		self.isTeamValid = True
+		self.save()
+		
+	def desvalidar(self):
+		self.isTeamValid = False
+		self.save()
 
 class Jugador(models.Model):
 	ROL_CHOICES = [
@@ -25,6 +34,7 @@ class Jugador(models.Model):
 	rol =  models.CharField(max_length=3, choices=ROL_CHOICES)
 	top = models.BooleanField(default=False)
 	team = models.ForeignKey(Equip)
+	email = models.EmailField()
 
 	def __unicode__(self):
 		return u"%s" % self.name
@@ -33,17 +43,19 @@ class Jugador(models.Model):
 class Lliga(models.Model):
 	codi = models.IntegerField(default=0)
 
+class Jornada(models.Model):
+	date = models.DateTimeField(default=timezone.now())
+	league = models.ForeignKey(Lliga)
+
+
 class Partida(models.Model):
 	codi = models.IntegerField(default=0)
 	ip = models.CharField(max_length= 15)
+	equips = models.ManyToManyField(Equip)
+	jornada = models.ForeignKey(Jornada)
+	
 
 
-	equipA = models.ManyToManyField(Equip)
-	#equipB = models.ForeignKey(Equip)
-
-
-class Jornada(models.Model):
-	date = models.DateTimeField(default=timezone.now())
 
 class Estadistiques(models.Model):
 	mortsEquip = models.IntegerField(default=0)
