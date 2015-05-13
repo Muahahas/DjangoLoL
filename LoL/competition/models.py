@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 import datetime
 from django.utils import timezone
@@ -34,7 +35,7 @@ class Jugador(models.Model):
 	rol =  models.CharField(max_length=3, choices=ROL_CHOICES)
 	top = models.BooleanField(default=False)
 	team = models.ForeignKey(Equip)
-	email = models.EmailField()
+	email = models.EmailField()#unique=True)
 
 	def __unicode__(self):
 		return u"%s" % self.name
@@ -43,16 +44,26 @@ class Jugador(models.Model):
 class Lliga(models.Model):
 	codi = models.IntegerField(default=0)
 
+	def __unicode__(self):
+		return u'Lliga nº %d' % (self.codi)
+
 class Jornada(models.Model):
+	codi = models.IntegerField(default=0)
 	date = models.DateTimeField(default=timezone.now())
 	league = models.ForeignKey(Lliga)
 
+	def __unicode__(self):
+		return u'Jornada nº %d de la  %s' % (self.codi, self.league)
 
 class Partida(models.Model):
 	codi = models.IntegerField(default=0)
 	ip = models.CharField(max_length= 15)
 	equips = models.ManyToManyField(Equip)
 	jornada = models.ForeignKey(Jornada)
+
+	def __unicode__(self):
+		return u'Partida nº %d de la %s' % (self.codi, self.jornada)
+
 	
 
 

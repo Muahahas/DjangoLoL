@@ -321,25 +321,30 @@ def generarJornades(teams, lliga):
 		if i % 2 == 0:
 			jornadaParell(teams)
 			journey = Jornada()
+			journey.codi = i
 			journey.league = lliga
 			journey.save()
 				
 		else:
 			jornadaImparell(teams)
 			journey = Jornada()
+			journey.codi = i
 			journey.league = lliga
 			journey.save()
-		for team1, team2 in pairwise(teams):
+		e = 0
+		for team1, team2 in pairwise(teams):			
 			match = Partida()
+			match.codi = e
 			match.jornada = journey
 			match.save()
 			if  team1.username == '':
-				match.equipA.add(team2)	
+				match.equips.add(team2)	
 			elif team2.username == '':
-				match.equipA.add(team1)
+				match.equips.add(team1)
 			else:
-				match.equipA.add(team1)
-				match.equipA.add(team2)		
+				match.equips.add(team1)
+				match.equips.add(team2)	
+			e+=1
 		
 		print teams
 
