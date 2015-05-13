@@ -7,6 +7,7 @@ from forms import *
 from django.forms.models import inlineformset_factory
 from django.forms.formsets import formset_factory
 import unicodedata
+from datetime import datetime
 from django.core.mail import EmailMessage
 
 from itertools import izip
@@ -320,17 +321,13 @@ def generarJornades(teams, lliga):
 	for i in xrange(rounds):
 		if i % 2 == 0:
 			jornadaParell(teams)
-			journey = Jornada()
-			journey.codi = i
-			journey.league = lliga
-			journey.save()
-				
 		else:
 			jornadaImparell(teams)
-			journey = Jornada()
-			journey.codi = i
-			journey.league = lliga
-			journey.save()
+		journey = Jornada()
+		journey.date = datetime(2015,6,10,i)
+		journey.codi = i
+		journey.league = lliga
+		journey.save()
 		e = 0
 		for team1, team2 in pairwise(teams):			
 			match = Partida()
