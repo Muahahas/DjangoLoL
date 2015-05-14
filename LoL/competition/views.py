@@ -55,11 +55,11 @@ def Comprovacio(equip, players):
    	listjugadors=list()
    	for i in range(len(data["jugadors"])):
    		juga.nom=data["jugadors"][i]["nom"]
-    	juga.email=data["jugadors"][i]["correu"]
-    	print juga.nom, juga.email
-    	listjugadors.append(juga)
-    	juga = jugadorComprovacio()
-	a = True
+    		juga.email=data["jugadors"][i]["correu"]
+    		print juga.nom, juga.email
+    		listjugadors.append(juga)
+    		juga = jugadorComprovacio()
+		a = True
 	for item in players:
 		b = False
 		for player in listjugadors:
