@@ -50,7 +50,7 @@ Gestio d'una competicio de League of Legends
 	Enviar informació(FET)
 	Registre equip(Faltaria arreglar que mires que no hi hagi cap jugador amb el mateix nom ni correu(de moment a la BD el nom no esta unique per a testejar millor))
 	Comprobaciò usuaris(Funcio JSON)
-	Generar documents XML(Com a la prac de SITW) (Correcte)
+	Generar documents XML(Com a la prac de SITW) (Correcte)(De que s'ha de generar XML? Dels equips i jugadors inscrits o dels horaris o estadistiques i resultats? o tot xD
 
 #Errors a corregir
 

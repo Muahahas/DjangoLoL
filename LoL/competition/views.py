@@ -55,11 +55,10 @@ def Comprovacio(equip, players):
    	listjugadors=list()
    	for i in range(len(data["jugadors"])):
    		juga.nom=data["jugadors"][i]["nom"]
-    		juga.email=data["jugadors"][i]["correu"]
-    		print juga.nom, juga.email
-    		listjugadors.append(juga)
-    		juga = jugadorComprovacio()
-		a = True
+   		juga.email=data["jugadors"][i]["correu"]
+   		listjugadors.append(juga)
+   		juga = jugadorComprovacio()
+	a = True
 	for item in players:
 		b = False
 		for player in listjugadors:
@@ -68,10 +67,13 @@ def Comprovacio(equip, players):
 			if item.name == player.nom and item.email == player.email:
 				b = True
 		print b	
-		a = a and b	
+		a = a and b
+		print a
 
 	if a:
 		equip.validat()
+	else:
+		equip.desvalidar()
 
 
 
@@ -260,15 +262,18 @@ def editPlayers(request):
 	if request.method=='POST':		
 		names = request.POST.getlist('name')
 		roles = request.POST.getlist('rol')
+		emails = request.POST.getlist('email')
 		requestForm = [request.POST.copy() for count in xrange(5)]
 		for item in requestForm:
 			item.__setitem__('name',names.pop(0))
 			item.__setitem__('rol',roles.pop(0))
+			item.__setitem__('email',emails.pop(0))
 		form_player_list = [jugadorForm(requestForm.pop(0),request.FILES, instance=llista.pop(0)) for count in xrange(5)]
 		for item in form_player_list:
 				item.team = equip
 		if isTeamValid(form_player_list):
 			players = teamSave(form_player_list)
+			Comprovacio(equip,players)
 			return HttpResponseRedirect('/jugadors')
 	else:
 		form_player_list = [jugadorForm(instance=llista.pop(0)) for count in xrange(5)]
