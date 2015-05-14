@@ -1,7 +1,0 @@
-{
- "jugadors":[
-	    {"nom": "Tom","correu": "Cruise@gmail.com"},
-	    {"nom": "Maria","correu": "Sharapova@gmail.com"},
-	    {"nom": "James","correu": "Bond@gmail.com"}
-	    ]
-	}
