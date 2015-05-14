@@ -5,9 +5,14 @@
 	Jugadors </h1>
 <ul>
 	{% for item in llista %}
-	<li>Jugador: {{item}} Rol: {{ item.rol }}</li>
+	<li>Jugador: {{item}} Rol: {{ item.rol }}</li></p>
 	{% empty %} No tens cap jugador inscrit. Si ets Admin desdel recompte podras veure els jugadors de cada equip.
 	{% endfor %}
+	{% if not user.is_staff %}
+		<form action='/edit'>		
+		<br><p><input type="submit" value="Editar jugadors" /></p>
+		</form>
+	{% endif %}
 	
 </ul>
 {% endblock %}

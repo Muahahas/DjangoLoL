@@ -2,13 +2,16 @@
 {% block header %} Equip Creat Correctament {% endblock %}
 {% block content %}
 
-	<p>Has creat correctament l'equip "{{equip}}".</p>
+	<p>Has creat correctament l'equip "{{equip}}".</p> 
 	<p>Amb els jugadors:</p>
 	{% for item in players %}
 		<p>Jugador: {{item}} Rol: {{ item.rol }}</p>
 	{% endfor %}
-
+	{% if equip.isTeamValid %}
+	<p>Les dades son correctes, l'equip esta validat.<p>
+	{% else %}
 	<p> L'equip encara està pendent de validar quan estigui validat ho veuras al panell privat.</p>
+	{% endif %}
 
 
 {% endblock %}

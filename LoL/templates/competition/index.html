@@ -8,11 +8,13 @@
 	<li><a href ='/recount'>Recompte Equips</a></li>
 	{% if user.username %}
 	<li><a href='/jugadors'>Jugadors</a></li>
+
 	{% else %}
-	<li>2</li>
+	<li><a href='/calendar'>Calendari</a></li>
 	{% endif %}
 	<li><a href='/enviarmisatge'>Missatge</a></li>
 	<li><a href='/generar'>Crear Horari</a></li>
+	
 	
 </ul>
 {% endblock %}

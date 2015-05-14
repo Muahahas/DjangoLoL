@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 import datetime
-from django.utils import timezone
+from datetime import datetime
+#from django.utils import timezone
 from django.contrib import auth
 # Create your models here.
 
@@ -49,7 +50,7 @@ class Lliga(models.Model):
 
 class Jornada(models.Model):
 	codi = models.IntegerField(default=0)
-	date = models.DateTimeField(default=timezone.now())
+	date = models.DateTimeField(default=datetime.now())
 	league = models.ForeignKey(Lliga)
 
 	def __unicode__(self):

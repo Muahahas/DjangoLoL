@@ -8,7 +8,9 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 	class Meta:
 		model = Equip
 		exclude = ['groups','user_permissions','is_staff','is_active','is_superuser','last_login','date_joined']
+
 """
+
 
 class jugadorForm(ModelForm):
 
@@ -18,6 +20,7 @@ class jugadorForm(ModelForm):
 		team = None
 		model = Jugador
 		exclude=['top','team',]
+		fields = ("name","email","rol")
 
 	def __init__(self, *args, **kwargs):
 		#prefix = kwargs.pop('prefix',None)
@@ -67,6 +70,7 @@ class nouEquip(ModelForm):
 
 
 class email(Form):
+
 	remitente = forms.EmailField(label=_("From:"),max_length=30)
 	destinatari = forms.EmailField(label=_("To:"),max_length=30)
 	asunto = forms.CharField(label=_("Subject:"),max_length=30)

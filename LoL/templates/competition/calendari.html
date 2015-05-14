@@ -1,0 +1,28 @@
+{% extends "competition/base.html" %}
+{% block header %}Horaris{% endblock %}
+{% block content %}
+
+	{% for item in list %}
+		<h2>{{item}}</h2>
+		{% for journey in item.jornada_set.all %}
+			<p>{{journey}} &nbsp;&nbsp;Hora: {{journey.date.time}}</p>
+			<ul>
+			{% for partida in journey.partida_set.all %}			
+				{% if partida.equips.all.count == 1 %}
+				<li>El {{partida.equips.all.0}} descansa aquesta jornada.</li><br>
+				{% else %}
+				<li>{{partida}}</li>
+				<ul>
+				<li>{{partida.equips.all.0 }}  VS. {{partida.equips.all.1}}</li>
+				</ul>
+				{% endif %}				
+			{% endfor %}
+			</ul>
+		{% endfor %}
+
+	{% endfor %}
+
+
+
+
+{% endblock %}

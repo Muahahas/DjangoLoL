@@ -9,6 +9,9 @@ from django.forms.formsets import formset_factory
 import unicodedata
 from datetime import datetime
 from django.core.mail import EmailMessage
+from django.views.generic.base import TemplateResponseMixin
+from django.core import serializers
+import json
 
 from itertools import izip
 import math
@@ -22,6 +25,55 @@ from django.contrib.auth.models import User
 
 
 # Create your views here.
+class ConnegResponseMixin(TemplateResponseMixin):
+
+    def render_xml_object_response(self, objects, **kwargs):
+        xml_data = serializers.serialize(u"xml", objects, **kwargs)
+        return HttpResponse(xml_data, content_type=u"application/xml")
+
+    def render_to_response(self, context, **kwargs):
+        if 'extension' in self.kwargs:
+            try:
+                objects = [self.object]
+            except AttributeError:
+                objects = self.object_list
+            return self.render_xml_object_response(objects=objects)
+        else:
+            return super(ConnegResponseMixin, self).render_to_response(context)
+
+class jugadorComprovacio():
+		nom=""
+		email=""
+
+def Comprovacio(equip, players):
+	json_file = 'jugadors.json'
+	juga = jugadorComprovacio()		
+	#jugadors= '0'
+   	json_data=open(json_file)
+   	data = json.load(json_data)
+   	json_data.close()
+   	listjugadors=list()
+   	for i in range(len(data["jugadors"])):
+   		juga.nom=data["jugadors"][i]["nom"]
+    	juga.email=data["jugadors"][i]["correu"]
+    	print juga.nom, juga.email
+    	listjugadors.append(juga)
+    	juga = jugadorComprovacio()
+	a = True
+	for item in players:
+		b = False
+		for player in listjugadors:
+			print player.nom, player.email
+			print item.name, item.email
+			if item.name == player.nom and item.email == player.email:
+				b = True
+		print b	
+		a = a and b	
+
+	if a:
+		equip.validat()
+
+
 
 class indexView(ListView):
 	template_name = 'competition/index.html'
@@ -128,11 +180,13 @@ def nuevo_equipo_jugador(request):
 	if request.method=='POST':
 		names = request.POST.getlist('name')
 		roles = request.POST.getlist('rol')
+		emails = request.POST.getlist('email')
 		
 		requestForm = [request.POST.copy() for count in xrange(5)]
 		for item in requestForm:
 			item.__setitem__('name',names.pop(0))
 			item.__setitem__('rol',roles.pop(0))
+			item.__setitem__('email',emails.pop(0))
 		#requestForm2 = request.POST.copy()
 		#requestForm2.__setitem__('name',names.pop(0))
 		form_team = nouEquip(request.POST, request.FILES,)
@@ -152,7 +206,7 @@ def nuevo_equipo_jugador(request):
 				#form2.save()			
 				players = teamSave(form_player_list)
 				#return HttpResponseRedirect()
-				enviarComprovacio(equip,players)
+				Comprovacio(equip,players)
 				return render_to_response('competition/teamokey.html',{'equip':equip,'players':players})
 	else:
 		form_team = nouEquip()
@@ -199,7 +253,33 @@ def inscrits(request):
 	#template_name = 'competition/jugadorsList.html'
 	return render_to_response('competition/jugadorsList.html',{'llista':llista}, context_instance=RequestContext(request))
 
-class  teamDetail(DetailView):
+def editPlayers(request):
+	equip = Equip.objects.get(username__iexact=unicode(request.user.username))
+	llista = list(Jugador.objects.filter(team=equip))
+	
+	if request.method=='POST':		
+		names = request.POST.getlist('name')
+		roles = request.POST.getlist('rol')
+		requestForm = [request.POST.copy() for count in xrange(5)]
+		for item in requestForm:
+			item.__setitem__('name',names.pop(0))
+			item.__setitem__('rol',roles.pop(0))
+		form_player_list = [jugadorForm(requestForm.pop(0),request.FILES, instance=llista.pop(0)) for count in xrange(5)]
+		for item in form_player_list:
+				item.team = equip
+		if isTeamValid(form_player_list):
+			players = teamSave(form_player_list)
+			return HttpResponseRedirect('/jugadors')
+	else:
+		form_player_list = [jugadorForm(instance=llista.pop(0)) for count in xrange(5)]
+	return render_to_response('competition/equipedit.html',{'form_player_list':form_player_list}, context_instance=RequestContext(request))
+
+
+
+
+
+
+class  teamDetail(DetailView, ConnegResponseMixin):
 	model = Equip
 	template_name = 'competition/team_detail.html'
 
@@ -207,26 +287,17 @@ class  teamDetail(DetailView):
 	def get_context_data(self, **kwargs):
 		context = super(teamDetail,self).get_context_data(**kwargs)
 		return context
-		
-def enviarComprovacio(equip, players):
-	team = equip
-	jugadors = Jugador.objects.filter(team=equip)
-	subject = "Validate %s" % (equip)
-	body = "Team: %s Players: 1- %s   2- %s   3- %s   4- %s   5- %s" % (equip, jugadors[0], jugadors[1], jugadors[2], jugadors[3], jugadors[4])
-	from_email = "admin@admin.com"
-	to = ["checkTop@riot.com"]
-	mail = EmailMessage(subject,body,from_email,to)
-	try:
-		imail.send()
-		print "sent"
-		#return HttpResponseRedirect('/validate', {'equip':equip,'players':jugadors},context_instance=RequestContext(request))
-	except:
-		print "not send"
-		#return HttpResponseRedirect('/validate', {'equip':equip,'players':jugadors},context_instance=RequestContext(request))
 
+def validate(request, pk):
+	
+	team = Equip.objects.get(id=pk)
 
-
-
+	#team.isValidTeam = True
+	if team.isTeamValid:
+		team.desvalidar()
+	else:
+		team.validat()	
+	return HttpResponseRedirect('/team/%s/' % (pk))
 
 def enviarInfo(request):
 	if request.method=='POST':
@@ -254,16 +325,6 @@ def enviarInfo(request):
 	return render_to_response('competition/enviarinfo.html',{'formulario':formulario},context_instance=RequestContext(request))
 
 
-def validate(request, pk):
-	
-	team = Equip.objects.get(id=pk)
-
-	#team.isValidTeam = True
-	if team.isTeamValid:
-		team.desvalidar()
-	else:
-		team.validat()	
-	return HttpResponseRedirect('/team/%s/' % (pk))
 
 
 #def enviarInfo(request):
@@ -324,7 +385,7 @@ def generarJornades(teams, lliga):
 		else:
 			jornadaImparell(teams)
 		journey = Jornada()
-		journey.date = datetime(2015,6,10,i)
+		journey.date = datetime(2015,6,10,i,0,0)
 		journey.codi = i
 		journey.league = lliga
 		journey.save()
@@ -384,5 +445,14 @@ def generarHoraris(request):
 	
 	return HttpResponse('FI')
 
+
+class viewCalendar(ListView):
+	queryset = Lliga.objects.all()
+	context_object_name = 'list'
+	template_name = 'competition/calendari.html'
+
+	def	get_context_data(self, **kwargs):
+		context	= super(viewCalendar, self).get_context_data(**kwargs)	
+		return context
 
 

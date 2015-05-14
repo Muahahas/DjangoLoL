@@ -1,8 +1,16 @@
 {% extends 'competition/base.html' %}
 {% block header %}Enviar missatge{% endblock %}
 {% block content%}
-	<form id='formulario' method='POST' action=''>{% csrf_token %}{{ formulario.as_p }}
-	<p><input type='submit' value='Confirmar'/></p>
+	<form id='formulario' method='POST' action=''>{% csrf_token %}
+		{{formulario.remitente.label}}&nbsp;{{ formulario.remitente }}</p>
+		{{formulario.destinatari.label}}&nbsp;{{formulario.destinatari}}</p>
+		{{formulario.asunto.label}}&nbsp;{{formulario.asunto}}</p>
+		{{formulario.mensaje.label}}<br>{{formulario.mensaje}}</p>
+		{{formulario.attach.label}}&nbsp;{{formulario.attach}}</p>
+		<p><input type='submit' value='Confirmar'/></p>
 	</form>
+	<br>
+	<br>
+	<a href='/'>Enrere</a>
 {% endblock %}
 

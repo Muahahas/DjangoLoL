@@ -1,0 +1,17 @@
+{% extends "competition/base.html" %}
+{% block header %}Edita{% endblock %}
+{% block content %}
+<h1>
+	Editar Jugadors
+</h1>
+
+<form id='formulario' method='POST' action=''>{% csrf_token %}{{ form_team.as_p }}
+	</br>
+	{% for item in form_player_list %}
+		{{ item.as_p }}</br>
+	{% endfor %}
+	<p><input type='submit' value='Confirmar'/></p>
+</form>
+
+
+{% endblock %}

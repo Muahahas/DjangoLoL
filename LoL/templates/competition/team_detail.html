@@ -12,13 +12,14 @@
 </ul>
 </br>
 </br>
+<form action="{% url 'competition:validate_team' equip.id %}">
 {% if equip.isTeamValid %}
 <p>L'equip esta validat!</p>
-<p><a href="{% url 'competition:validate_team' equip.id %}" >Desvalidate</a></p>
+<input type="submit" name="list" value="Desvalidate" />
 {% else %}
 <p>L'equip encara esta pendent d'activar.</p>
-<p><a href="{% url 'competition:validate_team' equip.id %}" >Validate</a></p>
+<p><input type="submit" name="list" value="Validate" /></p>
 {% endif %}
-
+</form>
 
 {% endblock %}
