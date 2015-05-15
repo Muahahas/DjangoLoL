@@ -1,0 +1,24 @@
+{% extends "competition/base.html" %}
+{% block header %}Pocs usuaris{% endblock %}
+{% block content %}
+
+<h1>
+	No hi ha suficients jugadors.
+</h1>
+
+{% if n == 0 %}
+
+<p>No hi ha cap equip validat.</p>
+
+
+{% elif n == 1 %}
+
+<p>Nomes hi ha un equip validat.</p>
+
+{% else %}
+
+<p>Nomes hi ha dos equips validats.</p>
+
+{% endif %}
+
+{% endblock %}

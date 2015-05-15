@@ -12,6 +12,9 @@ from django.core.mail import EmailMessage
 from django.views.generic.base import TemplateResponseMixin
 from django.core import serializers
 import json
+import smtplib
+import string
+from leagueoflegends import LeagueOfLegends, RiotError
 
 from itertools import izip
 import math
@@ -81,18 +84,6 @@ class indexView(ListView):
 	template_name = 'competition/index.html'
 	queryset=Equip.objects.all()
 
-#No s'utilitza
-def nuevo_usuario(request):
-	if request.method=='POST':
-		formulario = UserCreationForm(request.POST)
-		if formulario.is_valid:
-			formulario.save()
-			return HttpResponseRedirect('/')
-	else:
-		formulario = UserCreationForm()
-	return render_to_response('competition/nuevousuario.html',{'formulario':formulario}, context_instance=RequestContext(request))
-
-
 def loginUser(request):
 	if not request.user.is_anonymous():
 		return HttpResponseRedirect('/privado')
@@ -131,24 +122,6 @@ def cerrar(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
-#Nomes registra equip, no s'utilitza ja
-def nuevo_equipo(request):
-	if request.method=='POST':
-		formulario = nouEquip(request.POST, request.FILES)
-		if formulario.is_valid():
-			equip = formulario.save()
-			request.equip = equip
-			
-			return render_to_response('competition/teamokey.html',{'equip':equip})
-			
-	else:
-		formulario = nouEquip()
-	return render_to_response('competition/equipform.html',{'formulario':formulario},context_instance=RequestContext(request))
-
-
-
-
-
 def isTeamValid(list):
 	a = True
 	for item in list:
@@ -170,8 +143,31 @@ def isRolAndNameValid(list,n):
 		a = a and item.name != list[n].name and item.rol != list[n].rol
 	return a and isRolAndNameValid(list,n+1)
 
-
-
+def enviarConfirmacio(equip, players):
+	username = "ebm7@alumnes.udl.cat"
+	password = "1994iole"
+	body_text = "El equip %s ha sigut registrat amb els jugadors %s, %s, %s, %s i %s" % (equip, players[0],players[1],players[2],players[3],players[4])
+	toaddrs = []
+	toaddrs.append(equip.correoe)
+	for item in players:
+		toaddrs.append(item.email)
+	server = smtplib.SMTP('alumnes.udl.cat:465')
+	BODY = string.join((
+            "From: %s" % username,
+            "To: %s" % ', '.join(toaddrs),
+            "Subject: Equip registrat a la competicio de lol" ,
+            "",
+            body_text
+            ), "\r\n")
+	server.starttls()
+	server.login(username,password)
+	try:
+		server.sendmail(username, toaddrs, BODY)
+		server.quit()
+	except:
+		server.quit()
+		return HttpResponse('Error')
+	return HttpResponse('Enviat')
 
 
 
@@ -189,37 +185,26 @@ def nuevo_equipo_jugador(request):
 			item.__setitem__('name',names.pop(0))
 			item.__setitem__('rol',roles.pop(0))
 			item.__setitem__('email',emails.pop(0))
-		#requestForm2 = request.POST.copy()
-		#requestForm2.__setitem__('name',names.pop(0))
+		
 		form_team = nouEquip(request.POST, request.FILES,)
 		form_player_list = [jugadorForm(requestForm.pop(0),request.FILES,) for count in xrange(5)]
 
-		#form1 = jugadorForm(requestForm.pop(), request.FILES, prefix='form-1')
-		#form2 = jugadorForm(requestForm.pop(), request.FILES ,prefix='form-2')
+		
 		if form_team.is_valid():
 			equip = form_team.save(commit=False)
-			#form1.team = equip	
-			#form2.team = equip		
 			for item in form_player_list:
 				item.team = equip
 			if isTeamValid(form_player_list):# and form2.is_valid():
 				equip = form_team.save()
-				#form1.save()
-				#form2.save()			
 				players = teamSave(form_player_list)
-				#return HttpResponseRedirect()
 				Comprovacio(equip,players)
+				enviarConfirmacio(equip,players)
 				return render_to_response('competition/teamokey.html',{'equip':equip,'players':players})
 	else:
 		form_team = nouEquip()
-		#form1 = jugadorForm(prefix='form-1')
-		#form2 = jugadorForm(prefix='form-2')
 		form_player_list = [jugadorForm() for count in xrange(5)]
 
 	return render_to_response('competition/equipform.html',{'form_team':form_team, 'form_player_list':form_player_list},context_instance=RequestContext(request))
-
-
-
 
 
 
@@ -236,13 +221,12 @@ def nuevo_jugador(request):
 	return render_to_response('competition/jugadorform.html',{'formulario':formulario}, context_instance=RequestContext(request))
 
 class recountInsc(ListView):
-	#totsEquips = Equip.objects.all()
+
 	context_object_name='total'
 	template_name='competition/recount.html'
 	def __init__(self):
 		self.queryset = Equip.objects.all()
-		#self.queryset = Equip.objects.filter(isTeamValid=True)
-		#self.queryset = self.totsEquips.count()
+
 
 
 @login_required(login_url='/login')
@@ -251,9 +235,9 @@ def inscrits(request):
 		llista = []
 	else:
 		equip = Equip.objects.get(username__iexact=unicode(request.user.username))
-		llista = Jugador.objects.filter(team = equip)	
-	#template_name = 'competition/jugadorsList.html'
+		llista = Jugador.objects.filter(team = equip)
 	return render_to_response('competition/jugadorsList.html',{'llista':llista}, context_instance=RequestContext(request))
+
 
 def editPlayers(request):
 	equip = Equip.objects.get(username__iexact=unicode(request.user.username))
@@ -293,11 +277,9 @@ class  teamDetail(DetailView, ConnegResponseMixin):
 		context = super(teamDetail,self).get_context_data(**kwargs)
 		return context
 
-def validate(request, pk):
-	
-	team = Equip.objects.get(id=pk)
 
-	#team.isValidTeam = True
+def validate(request, pk):	
+	team = Equip.objects.get(id=pk)
 	if team.isTeamValid:
 		team.desvalidar()
 	else:
@@ -330,28 +312,6 @@ def enviarInfo(request):
 	return render_to_response('competition/enviarinfo.html',{'formulario':formulario},context_instance=RequestContext(request))
 
 
-
-
-#def enviarInfo(request):
-#	if request.method=='POST':
-#		formulario = email(request.POST,request.FILES)
-#		if formulario.is_valid():
-#			mail = """From: %s
-#			To: %s
-#			MIME-Version: 1.0
-#			Content-type: text/html
-#			Subject: %s
-#			%s
-#			""" % (request.POST.__getitem__('remitente'), request.POST.__getitem__('destinatari'), request.POST.__getitem__('asunto'), request.POST.__getitem__('mensaje'))
-#			try:
-#				smtp = smtplib.SMTP('localhost')
-#				smtp.sendmail(request.POST.__getitem__('remitente'), request.POST.__getitem__('destinatari'), email)
-#				return HttpResponse('Enviat')
-#			except:
-#				return HttpResponse('ERROR AL ENVIAR EL MISSATGE')
-#	else:
-#		formulario = email()
-#	return render_to_response('competition/enviarinfo.html',{'formulario':formulario},context_instance=RequestContext(request))
 def pairwise(iterable):
     "s -> (s0,s1), (s2,s3), (s4, s5), ..."
     a = iter(iterable)
@@ -373,15 +333,9 @@ def jornadaImparell(list):
 	print list
 
 def generarJornades(teams, lliga):
-	if len(teams) % 2 == 0:
-		print "parell"
-		#return HttpResponse('Parell')
-	else:
-		print "imparell"
+	if len(teams) % 2 == 1:
 		teams.append(Equip())
-		#return HttpResponse('Imparell')
 
-	print teams
 	rounds = len(teams) - 1
 	
 	for i in xrange(rounds):
@@ -409,18 +363,17 @@ def generarJornades(teams, lliga):
 				match.equips.add(team2)	
 			e+=1
 		
-		print teams
+		
 
 
 def generarHoraris(request):
-	#pass
 	teams = list(Equip.objects.filter(isTeamValid = True))
 	if not teams:
-		return HttpResponse('No hi ha cap equip validat')
+		return render_to_response('competition/pocsusers.html',{'n':0})
 	elif len(teams) == 1:
-		return HttpResponse('Nomes hi ha un equip validat')
+		return render_to_response('competition/pocsusers.html',{'n':1})
 	elif len(teams) == 2:
-		return HttpResponse('Nomes hi ha 2 equips validats')
+		return render_to_response('competition/pocsusers.html',{'n':2})
 
 	nLligues = math.ceil(float(len(teams))/float(24))
 	if len(teams) % nLligues == 0:
@@ -446,10 +399,8 @@ def generarHoraris(request):
 		lliga.save()
 		generarJornades(item, lliga)
 		i+=1
-
 	
-	return HttpResponse('FI')
-
+	return render_to_response('competition/calendariFet.html',{'n':i})
 
 class viewCalendar(ListView):
 	queryset = Lliga.objects.all()
@@ -460,4 +411,9 @@ class viewCalendar(ListView):
 		context	= super(viewCalendar, self).get_context_data(**kwargs)	
 		return context
 
-
+def getStatus(request):
+	lol = LeagueOfLegends('e34cddf8-4d00-41e9-9ff7-e744f7fb189c')
+	json_file = 'jugadors.json'
+   	json_data=open(json_file)
+   	data = json.load(json_data)
+   	json_data.close()

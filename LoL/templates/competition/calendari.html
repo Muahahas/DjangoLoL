@@ -5,7 +5,7 @@
 	{% for item in list %}
 		<h2>{{item}}</h2>
 		{% for journey in item.jornada_set.all %}
-			<p>{{journey}} &nbsp;&nbsp;Hora: {{journey.date.time}}</p>
+			<p><b>{{journey}}</b> &nbsp;&nbsp;Hora: {{journey.date.time}}</p>
 			<ul>
 			{% for partida in journey.partida_set.all %}			
 				{% if partida.equips.all.count == 1 %}
