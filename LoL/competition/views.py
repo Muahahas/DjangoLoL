@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from models import *
 from forms import *
+from django import forms as django_forms
 from django.forms.models import inlineformset_factory
 from django.forms.formsets import formset_factory
 import unicodedata
@@ -122,6 +123,15 @@ def cerrar(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
+def isRolAndNameValid(list,n):
+	a = True
+	if n == len(list):
+		return a
+	for item in list[n+1:]:
+		a = a and item.name != list[n].name and item.rol != list[n].rol
+	return a and isRolAndNameValid(list,n+1)
+
+
 def isTeamValid(list):
 	a = True
 	for item in list:
@@ -135,13 +145,7 @@ def teamSave(list):
 	 	listP.append(player)
 	 return listP
 
-def isRolAndNameValid(list,n):
-	a = True
-	if n == len(list):
-		return a
-	for item in list[n+1:]:
-		a = a and item.name != list[n].name and item.rol != list[n].rol
-	return a and isRolAndNameValid(list,n+1)
+
 
 def enviarConfirmacio(equip, players):
 	username = "ebm7@alumnes.udl.cat"
@@ -238,7 +242,7 @@ def inscrits(request):
 		llista = Jugador.objects.filter(team = equip)
 	return render_to_response('competition/jugadorsList.html',{'llista':llista}, context_instance=RequestContext(request))
 
-
+@login_required(login_url='/login')
 def editPlayers(request):
 	equip = Equip.objects.get(username__iexact=unicode(request.user.username))
 	llista = list(Jugador.objects.filter(team=equip))
@@ -351,17 +355,21 @@ def generarJornades(teams, lliga):
 		e = 0
 		for team1, team2 in pairwise(teams):			
 			match = Partida()
-			match.codi = e+1
 			match.jornada = journey
 			match.save()
 			if  team1.username == '':
-				match.equips.add(team2)	
+				match.codi = 0
+				match.equips.add(team2)
 			elif team2.username == '':
+				match.codi = 0
 				match.equips.add(team1)
 			else:
+				match.codi = e+1
 				match.equips.add(team1)
-				match.equips.add(team2)	
-			e+=1
+				match.equips.add(team2)
+				e+=1
+			match.save()
+				
 		
 		
 
@@ -404,7 +412,7 @@ def generarHoraris(request):
 		generarJornades(item, lliga)
 		i+=1
 	
-	return render_to_response('competition/calendariFet.html',{'n':i})
+	return render_to_response('competition/calendariFet.html',{'n':i},context_instance=RequestContext(request))
 
 class viewCalendar(ListView):
 	queryset = Lliga.objects.all()
@@ -423,7 +431,6 @@ class leagueDetail(DetailView, ConnegResponseMixin):
 		context = super(leagueDetail,self).get_context_data(**kwargs)
 		return context
 
-
 def getStatus(request):
 	#lol = LeagueOfLegends('e34cddf8-4d00-41e9-9ff7-e744f7fb189c')
 	regions = ['br','eune','euw','lan','las','oce','ru','tr'] #'pbe'
@@ -432,13 +439,33 @@ def getStatus(request):
 	try:
 		response =[urllib2.urlopen(add) for add in url]
 	except urllib2.HTTPError, err:
-		return render_to_response('competition/servers.html',{'err':err})
+		return render_to_response('competition/servers.html',{'err':err},context_instance=RequestContext(request))
 	except urllib2.URLError, err:
-		return render_to_response('competition/servers.html',{'err':err})
+		return render_to_response('competition/servers.html',{'err':err},context_instance=RequestContext(request))
 
    	data = [json.load(resp) for resp in response]
    	status = dict(zip([item["name"] for item in data],[item["services"][1]["status"] for item in data]))
    	status["Brazil"]=stats[1]
    	status["Turkey"]=stats[2]
    	status["Oceania"]=stats[3]
-   	return render_to_response('competition/servers.html',{'status':status,'stats':stats})
+   	return render_to_response('competition/servers.html',{'status':status,'stats':stats},context_instance=RequestContext(request))
+
+@login_required(login_url='/login')
+def sendReclamation(request):
+	equip = Equip.objects.get(username__iexact = unicode(request.user.username))
+
+	if request.method=='POST':
+		formulario = reclamacioForm(equip, request.POST, request.FILES)
+		formulario.team = equip
+		formulario.jugador = Jugador.objects.get(id=request.POST.__getitem__('jugador'))
+		formulario.partida = Partida.objects.get(id=request.POST.__getitem__('partida'))
+		formulario.jornada = formulario.partida.jornada
+		formulario.lliga = formulario.jornada.league
+		if formulario.is_valid():
+			reclamacio = formulario.save()
+			return HttpResponse("Guardat")
+	else:
+		formulario = reclamacioForm(equip)
+
+	return render_to_response('competition/reclamacioform.html',{'formulario':formulario},context_instance=RequestContext(request))
+

@@ -10,12 +10,12 @@
 	<li><a href='/jugadors'>Jugadors</a></li>
 	{% endif %}
 	<li><a href='/calendar'>Calendari</a></li>
-	<li><a href='/enviarmisatge'>Missatge</a></li>	
+	{#<li><a href='/enviarmisatge'>Missatge</a></li>#}
 	<li><a href='/status'>Server status</a></li>
 	{% if user.is_staff %}
 	<li><a href='/generar'>Crear Horari</a></li>
-	{% endif %}
-	
+	{% endif %}	
+	<li><a href="/reclamation">Reclamacio</a></li>
 	
 </ul>
 {% endblock %}

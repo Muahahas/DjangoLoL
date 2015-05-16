@@ -13,7 +13,7 @@ urlpatterns = patterns('',
 	url(r'^recount',recountInsc.as_view()),
 	url(r'^team/(?P<pk>\d+)/$', teamDetail.as_view(),name='team_detail'),
 	url(r'^jugadors','competition.views.inscrits'),
-	url(r'^enviarmisatge','competition.views.enviarInfo'),
+	#url(r'^enviarmisatge','competition.views.enviarInfo'),
 	url(r'^team/(?P<pk>\d+)/validate','competition.views.validate', name='validate_team'),
 	#url(r'^validate','competition.views.Comprovacio'),
 	url(r'^generar','competition.views.generarHoraris'),
@@ -22,5 +22,6 @@ urlpatterns = patterns('',
 	url(r'^calendar/(?P<pk>\d+)/$',leagueDetail.as_view(),name='league_detail'),
 	url(r'^team/(?P<pk>\d+)\.(?P<extension>(json|xml))$', teamDetail.as_view(),name='team_detail'),
 	url(r'^calendar/(?P<pk>\d+)\.(?P<extension>(json|xml))$', leagueDetail.as_view(),name='league_detail'),
-	url(r'^status','competition.views.getStatus')
+	url(r'^status','competition.views.getStatus'),
+	url(r'^reclamation','competition.views.sendReclamation')
 )

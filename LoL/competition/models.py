@@ -65,10 +65,6 @@ class Partida(models.Model):
 	def __unicode__(self):
 		return u'Partida nº %d de la %s' % (self.codi, self.jornada)
 
-	
-
-
-
 class Estadistiques(models.Model):
 	mortsEquip = models.IntegerField(default=0)
 	killsEquip = models.IntegerField(default=0)
@@ -88,3 +84,14 @@ class Resultat(models.Model):
 	assistEquipB = models.IntegerField(default=0)
 
 	partida = models.OneToOneField(Partida)
+
+
+class Reclamacio(models.Model):
+	team = models.ForeignKey(Equip)	
+	jornada = models.ForeignKey(Jornada)
+	lliga = models.ForeignKey(Lliga)
+	jugador = models.ForeignKey(Jugador)
+	partida = models.ForeignKey(Partida)
+
+	text = models.CharField(max_length=300)
+

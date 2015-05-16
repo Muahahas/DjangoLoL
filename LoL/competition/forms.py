@@ -1,6 +1,6 @@
 from django.forms import ModelForm, Form
 from django import forms
-from competition.models import Equip, Jugador
+from competition.models import *
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 
@@ -76,3 +76,34 @@ class email(Form):
 	asunto = forms.CharField(label=_("Subject:"),max_length=30)
 	mensaje = forms.CharField(label=_("Messaje:"),max_length=300,widget=forms.Textarea)
 	attach = forms.FileField(label=_("Attachment:"),required=False)
+
+
+class reclamacioForm(ModelForm):
+	text = forms.CharField(label=_("Body of reclamation:"),max_length=300, widget=forms.Textarea)
+	#jugador = forms.ModelChoiceField(Jugador.objects.all())
+
+	class Meta:
+		team = None
+		jugador = None
+		partida = None
+		jornada = None
+		lliga = None
+		model = Reclamacio
+		exclude = ['team','jornada', 'lliga']
+		
+	def __init__(self,team, *args, **kwargs):
+		super(reclamacioForm,self).__init__(*args,**kwargs)
+		self.team = team
+		self.fields['jugador'] = forms.ModelChoiceField(Jugador.objects.filter(team=team),to_field_name="id")
+		self.fields['partida'] = forms.ModelChoiceField(Partida.objects.filter(equips=team, codi=not 0),to_field_name='id')
+
+	def save(self, commit=True):
+		reclamacio = super(reclamacioForm, self).save(commit=False)
+		reclamacio.team = self.team
+		reclamacio.jugador = self.jugador
+		reclamacio.partida = self.partida
+		reclamacio.jornada = self.partida.jornada
+		reclamacio.lliga = self.partida.jornada.league
+		if commit:
+				reclamacio.save()
+		return reclamacio
