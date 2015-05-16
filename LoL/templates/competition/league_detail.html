@@ -1,0 +1,24 @@
+{% extends 'competition/base.html' %}
+{% block header %}Detalls de la lliga{% endblock %}
+{% block content %}
+		<h1>{{lliga}}</h1>
+	{% for journey in lliga.jornada_set.all %}
+			<p><b>{{journey}}</b> &nbsp;&nbsp;Hora: {{journey.date.time}}</p>
+			<ul>
+			{% for partida in journey.partida_set.all %}			
+				{% if partida.equips.all.count == 1 %}
+				<li>El {{partida.equips.all.0}} descansa aquesta jornada.</li><br>
+				{% else %}
+				<li>{{partida}}</li>
+				<ul>
+				<li>{{partida.equips.all.0 }}  VS. {{partida.equips.all.1}}</li>
+				</ul>
+				{% endif %}				
+			{% endfor %}
+			</ul>
+		{% endfor %}
+		<br>
+		<br>
+		<a href='/calendar'>Enrere</a>
+	
+{% endblock %}

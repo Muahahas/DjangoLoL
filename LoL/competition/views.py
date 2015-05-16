@@ -14,7 +14,7 @@ from django.core import serializers
 import json
 import smtplib
 import string
-from leagueoflegends import LeagueOfLegends, RiotError
+import urllib2
 
 from itertools import izip
 import math
@@ -345,13 +345,13 @@ def generarJornades(teams, lliga):
 			jornadaImparell(teams)
 		journey = Jornada()
 		journey.date = datetime(2015,6,10,i,0,0)
-		journey.codi = i
+		journey.codi = i+1
 		journey.league = lliga
 		journey.save()
 		e = 0
 		for team1, team2 in pairwise(teams):			
 			match = Partida()
-			match.codi = e
+			match.codi = e+1
 			match.jornada = journey
 			match.save()
 			if  team1.username == '':
@@ -367,6 +367,10 @@ def generarJornades(teams, lliga):
 
 
 def generarHoraris(request):
+	lliguesAnteriors = list(Lliga.objects.all())
+	if lliguesAnteriors:
+		for item in lliguesAnteriors:
+			item.delete()
 	teams = list(Equip.objects.filter(isTeamValid = True))
 	if not teams:
 		return render_to_response('competition/pocsusers.html',{'n':0})
@@ -395,7 +399,7 @@ def generarHoraris(request):
 	i = 0
 	for item in equipsPerLliga:
 		lliga = Lliga()
-		lliga.codi = i
+		lliga.codi = i+1
 		lliga.save()
 		generarJornades(item, lliga)
 		i+=1
@@ -411,9 +415,30 @@ class viewCalendar(ListView):
 		context	= super(viewCalendar, self).get_context_data(**kwargs)	
 		return context
 
+class leagueDetail(DetailView, ConnegResponseMixin):
+	model = Lliga
+	template_name = 'competition/league_detail.html'
+
+	def get_context_data(self, **kwargs):
+		context = super(leagueDetail,self).get_context_data(**kwargs)
+		return context
+
+
 def getStatus(request):
-	lol = LeagueOfLegends('e34cddf8-4d00-41e9-9ff7-e744f7fb189c')
-	json_file = 'jugadors.json'
-   	json_data=open(json_file)
-   	data = json.load(json_data)
-   	json_data.close()
+	#lol = LeagueOfLegends('e34cddf8-4d00-41e9-9ff7-e744f7fb189c')
+	regions = ['br','eune','euw','lan','las','oce','ru','tr'] #'pbe'
+	stats = ['online','alert','offline','deploying']
+	url = ["http://status.leagueoflegends.com/shards/%s" % (item) for item in regions]
+	try:
+		response =[urllib2.urlopen(add) for add in url]
+	except urllib2.HTTPError, err:
+		return render_to_response('competition/servers.html',{'err':err})
+	except urllib2.URLError, err:
+		return render_to_response('competition/servers.html',{'err':err})
+
+   	data = [json.load(resp) for resp in response]
+   	status = dict(zip([item["name"] for item in data],[item["services"][1]["status"] for item in data]))
+   	status["Brazil"]=stats[1]
+   	status["Turkey"]=stats[2]
+   	status["Oceania"]=stats[3]
+   	return render_to_response('competition/servers.html',{'status':status,'stats':stats})

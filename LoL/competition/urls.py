@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from django.views.generic import ListView
-from views import indexView, recountInsc, teamDetail, viewCalendar
+from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail
 
 urlpatterns = patterns('',
 	url(r'^$', indexView.as_view()),
@@ -18,6 +18,9 @@ urlpatterns = patterns('',
 	#url(r'^validate','competition.views.Comprovacio'),
 	url(r'^generar','competition.views.generarHoraris'),
 	url(r'^edit','competition.views.editPlayers'),
-	url(r'^calendar', viewCalendar.as_view()),
+	url(r'^calendar/$', viewCalendar.as_view()),
+	url(r'^calendar/(?P<pk>\d+)/$',leagueDetail.as_view(),name='league_detail'),
 	url(r'^team/(?P<pk>\d+)\.(?P<extension>(json|xml))$', teamDetail.as_view(),name='team_detail'),
+	url(r'^calendar/(?P<pk>\d+)\.(?P<extension>(json|xml))$', leagueDetail.as_view(),name='league_detail'),
+	url(r'^status','competition.views.getStatus')
 )
