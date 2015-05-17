@@ -32,7 +32,13 @@ from django.contrib.auth.models import User
 class ConnegResponseMixin(TemplateResponseMixin):
 
     def render_xml_object_response(self, objects, **kwargs):
-        xml_data = serializers.serialize(u"xml", objects, **kwargs)
+    	if objects[0].__class__ == Lliga:
+    		object_list = Jornada.objects.filter(league=objects[0])
+    		objects = objects + list(object_list)
+    	elif objects[0].__class__ == Equip:
+    		object_list = Jugador.objects.filter(team=objects[0])
+    		objects = objects + list(object_list)
+    	xml_data = serializers.serialize(u"xml", objects, **kwargs)
         return HttpResponse(xml_data, content_type=u"application/xml")
 
     def render_to_response(self, context, **kwargs):
@@ -291,6 +297,8 @@ def validate(request, pk):
 	return HttpResponseRedirect('/team/%s/' % (pk))
 
 def enviarInfo(request):
+	pass
+	"""
 	if request.method=='POST':
 		formulario = email(request.POST,request.FILES)
 		if formulario.is_valid():
@@ -314,7 +322,7 @@ def enviarInfo(request):
 	else:
 		formulario = email()
 	return render_to_response('competition/enviarinfo.html',{'formulario':formulario},context_instance=RequestContext(request))
-
+"""
 
 def pairwise(iterable):
     "s -> (s0,s1), (s2,s3), (s4, s5), ..."
@@ -469,3 +477,59 @@ def sendReclamation(request):
 
 	return render_to_response('competition/reclamacioform.html',{'formulario':formulario},context_instance=RequestContext(request))
 
+class jornadesList(ListView):
+	queryset = Jornada.objects.filter(iniciada=False, acabada=False).order_by('date')[:5]
+	context_object_name = 'listJornades'
+	template_name = 'competition/jornades_list.html'
+
+
+class jornadaDetail(DetailView):
+	model = Jornada
+	template_name = 'competition/jornada_detail.html'
+
+
+	def get_context_data(self, **kwargs):
+		context = super(jornadaDetail,self).get_context_data(**kwargs)
+		return context
+
+
+def getTeamsWaiting():
+	pass
+
+def asignIP():
+	pass
+
+def createResults():
+	pass
+
+def startJourney(request,pk):
+	getTeamsWaiting()
+	asignIP()
+	createResults()
+	journey = Jornada.objects.get(id=pk)
+	if not journey.iniciada and not journey.acabada:
+		journey.start()
+	return HttpResponseRedirect('/jornades/%s/' % (pk))
+
+def getResults():
+	pass
+
+def createClasification():
+	pass
+
+def updateClasification():
+	pass
+
+def sendInfo():
+	pass
+
+
+def finishJourney(request, pk):
+	getResults()
+	createClasification()
+	updateClasification()
+	sendInfo()
+	journey = Jornada.objects.get(id=pk)
+	if journey.iniciada and not journey.acabada:
+		journey.finish()
+	return HttpResponseRedirect('/jornades/%s/' % (pk))

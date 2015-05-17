@@ -1,0 +1,27 @@
+{% extends "competition/base.html" %}
+{% block header %}Detall jornada nº{{jornada.codi}}{% endblock %}
+{% block content %}
+<h1>{{jornada}}</h1>
+<h2>Partides:</h2>
+<ul>
+	{% for partida in jornada.partida_set.all %}
+			{% if partida.equips.all.count == 1 %}
+				<li>El {{partida.equips.all.0}} descansa aquesta jornada.</li><br>
+				{% else %}
+				<li>{{partida}}</li>
+				<ul>
+				<li>{{partida.equips.all.0 }}  VS. {{partida.equips.all.1}}</li>
+				</ul>
+			{% endif %}				
+	{% endfor %}
+</ul>
+{% if not jornada.iniciada and not jornada.acabada %}
+<form action="{% url 'competition:start_journey' jornada.id %}">
+<input type="submit" name="list" value="Start" />
+</form>
+{% elif jornada.iniciada %}
+<form action="{% url 'competition:finish_journey' jornada.id %}">
+<input type="submit" name="list" value="Finish" />
+</form>
+{% endif %}
+{% endblock %}

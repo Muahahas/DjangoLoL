@@ -1,0 +1,11 @@
+{% extends "competition/base.html" %}
+{% block header %}Jornades{% endblock %}
+{% block content %}
+<h1>Proximas jornadas por empezar</h1>
+<ul>
+{% for jornada in listJornades %}
+<li><a href='{% url 'competition:jornada_detail' jornada.id %}'>{{jornada}}</a>  Hora {{jornada.date}}</li>
+{% empty %} No hi ha cap jornada proximament, crea un nou calendari.
+{% endfor %}
+
+{% endblock %}

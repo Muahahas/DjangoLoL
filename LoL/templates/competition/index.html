@@ -14,8 +14,10 @@
 	<li><a href='/status'>Server status</a></li>
 	{% if user.is_staff %}
 	<li><a href='/generar'>Crear Horari</a></li>
-	{% endif %}	
+	{% elif user.username %}
 	<li><a href="/reclamation">Reclamacio</a></li>
+	{% endif %}	
+	<li><a href="/jornades">Jornades</a></li>
 	
 </ul>
 {% endblock %}

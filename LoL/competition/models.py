@@ -52,15 +52,28 @@ class Jornada(models.Model):
 	codi = models.IntegerField(default=0)
 	date = models.DateTimeField(default=datetime.now())
 	league = models.ForeignKey(Lliga)
+	iniciada = models.BooleanField(default=False)
+	acabada = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'Jornada nº %d de la  %s' % (self.codi, self.league)
+
+	def start(self):
+		self.iniciada = True
+		self.save()
+
+	def finish(self):
+		self.iniciada = False
+		self.acabada = True
+		self.save()
 
 class Partida(models.Model):
 	codi = models.IntegerField(default=0)
 	ip = models.CharField(max_length= 15)
 	equips = models.ManyToManyField(Equip)
 	jornada = models.ForeignKey(Jornada)
+	iniciada = models.BooleanField(default=False)
+	acabada = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'Partida nº %d de la %s' % (self.codi, self.jornada)
@@ -87,11 +100,13 @@ class Resultat(models.Model):
 
 
 class Reclamacio(models.Model):
-	team = models.ForeignKey(Equip)	
-	jornada = models.ForeignKey(Jornada)
-	lliga = models.ForeignKey(Lliga)
-	jugador = models.ForeignKey(Jugador)
-	partida = models.ForeignKey(Partida)
+		team = models.ForeignKey(Equip)	
+		jornada = models.ForeignKey(Jornada)
+		lliga = models.ForeignKey(Lliga)
+		jugador = models.ForeignKey(Jugador)
+		partida = models.ForeignKey(Partida)
 
-	text = models.CharField(max_length=300)
+		text = models.CharField(max_length=300)
 
+		class Meta:
+			unique_together = ['jugador','partida']
