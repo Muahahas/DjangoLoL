@@ -1,0 +1,17 @@
+{% extends "competition/base.html" %}
+{% block header %}Classificacio{% endblock %}
+{% block content %}
+{% for item in clasification %}
+	<h2>{{item}}</h2><br>
+	{% for position in positions %}
+		{% if position.0.clas == item %}
+			{% for pos in position %}
+				{{pos}}<br>
+			{% endfor %}
+		{% endif %}
+	{% endfor %}
+	
+	
+{% endfor %}
+
+{% endblock %}

@@ -298,31 +298,7 @@ def validate(request, pk):
 
 def enviarInfo(request):
 	pass
-	"""
-	if request.method=='POST':
-		formulario = email(request.POST,request.FILES)
-		if formulario.is_valid():
-			subject = request.POST.__getitem__('asunto')
-			body = request.POST.__getitem__('mensaje')
-			from_email = request.POST.__getitem__('remitente')
-			to = [request.POST.__getitem__('destinatari')]
-			attach = request.POST.__getitem__('attach')
-
-			if attach :
-				imail = EmailMessage(subject,body,from_email,to,attachments=attach)
-				#return HttpResponse("Attach")
-			else:
-				imail = EmailMessage(subject,body,from_email,to)
-				#return HttpResponse("No attach")
-			try:
-				imail.send()
-				return HttpResponse('Enviat')
-			except:
-				return HttpResponse('Error')
-	else:
-		formulario = email()
-	return render_to_response('competition/enviarinfo.html',{'formulario':formulario},context_instance=RequestContext(request))
-"""
+	
 
 def pairwise(iterable):
     "s -> (s0,s1), (s2,s3), (s4, s5), ..."
@@ -573,8 +549,34 @@ def updateClasification(results, journey):
 
 
 
-def sendInfo():
-	pass
+def sendInfo(journey):
+	clasification = Classificacio.objects.get(league=journey.league)
+	partides = list(Partida.objects.filter(jornada=journey))
+	results = [Resultat.objects.get(partida=partida) for partida in partides]
+	username = "ebm7@alumnes.udl.cat"
+	password = "1994iole"
+	body_text = serializers.serialize(u"xml", [clasification]+partides+results)
+	toaddrs = []
+	toaddrs.append("eloibuisan@gmail.com")
+	toaddrs.append("mart.a94@hotmail.com")
+	server = smtplib.SMTP('alumnes.udl.cat:465')
+	BODY = string.join((
+            "From: %s" % username,
+            "To: %s" % ', '.join(toaddrs),
+            "Subject: Final Jornada %s" % journey.codi ,
+            "",
+            body_text
+            ), "\r\n")
+
+	server.starttls()
+	server.login(username,password)
+	try:
+		server.sendmail(username, toaddrs, BODY)
+		server.quit()
+	except:
+		server.quit()
+		return HttpResponse('Error')
+	return HttpResponse('Enviat')
 
 def finishMatch(request,pk):
 	match = Partida.objects.get(id=pk)
@@ -589,7 +591,14 @@ def finishJourney(request, pk):
 	if journey.codi == 1:
 		createClasification(journey)
 	updateClasification(results,journey)
-	sendInfo()	
+	sendInfo(journey)	
 	if journey.iniciada and not journey.acabada:
 		journey.finish()
 	return HttpResponseRedirect('/jornades/%s/' % (pk))
+
+
+def viewClasification(request):
+	clasification = Classificacio.objects.all()
+	positions = [list(EquipPosition.objects.filter(clas=clasif).order_by('points')) for clasif in clasification]
+
+	return render_to_response('competition/clasification.html',{'clasification':clasification,'positions':positions, 'rounds':xrange(clasification.count())},context_instance=RequestContext(request))

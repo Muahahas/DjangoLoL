@@ -124,12 +124,21 @@ class Resultat(models.Model):
 
 class Classificacio(models.Model):
 	league = models.OneToOneField(Lliga)
+
+	def __unicode__(self):
+		return u'Classificacio de la lliga: nº %d' % self.league.codi 
 	
 
 class EquipPosition(models.Model):
 	points = models.IntegerField(default=0)
 	equip = models.ForeignKey(Equip)
 	clas = models.ForeignKey(Classificacio)
+
+	class Meta:
+		ordering = ['points']
+
+	def __unicode__(self):
+		return u'%s          Points: %d' % (self.equip,self.points)
 
 
 
