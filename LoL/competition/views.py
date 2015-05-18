@@ -497,6 +497,10 @@ class jornadaDetail(DetailView):
 		context = super(jornadaDetail,self).get_context_data(**kwargs)
 		return context
 
+class jornadesComensades(ListView):
+	queryset = Jornada.objects.filter(iniciada=True, acabada=False).order_by('date')
+	context_object_name = 'listJornades'
+	template_name = 'competition/jornades_listC.html'
 
 def getTeamsWaiting():
 	pass
@@ -517,8 +521,11 @@ def startJourney(request,pk):
 	asignIP()
 	createResults(journey)
 	journey = Jornada.objects.get(id=pk)
+	partides = Partida.objects.filter(jornada=journey)
 	if not journey.iniciada and not journey.acabada:
 		journey.start()
+	for item in partides:
+		item.start()
 	return HttpResponseRedirect('/jornades/%s/' % (pk))
 
 def getResults(journey):
@@ -534,15 +541,20 @@ def getResults(journey):
 def createClasification(journey):
 	classificacions_anteriors = Classificacio.objects.filter(league=journey.league)
 	if classificacions_anteriors:
+		for clas in classificacions_anteriors:
+			EquipPosition.objects.filter(clas=clas).delete()
 		classificacions_anteriors.delete()
 	clasification = Classificacio()
 	lliga = Lliga.objects.get(id=journey.league.id)
 	clasification.league = journey.league
-	#equips = lliga.equips.all()
-	#for item in journey.league.equips:
-	clasification.equips = dict(zip((t for t in lliga.equips.all()),(0 for n in xrange(lliga.equips.all().count()))))
-	print clasification.equips	
 	clasification.save()
+	for item in journey.league.equips.all():
+		aux = EquipPosition()
+		aux.points=0
+		aux.equip = item
+		aux.clas = clasification
+		aux.save()		
+	
 
 	
 def updateClasification(results, journey):
@@ -550,10 +562,12 @@ def updateClasification(results, journey):
 	for item in results:
 		partida = item.partida
 		if item.winner == 1:
-			clasification.equips[partida.equips[0]]=+3
+			aux = EquipPosition.objects.filter(clas=clasification, equip=partida.equips[0])
+			aux.points+=3
 		elif item.winner == 2:
-			clasification.equips[partida.equips[0]]=+3
-	print clasification.equips
+			aux = EquipPosition.objects.filter(clas=clasification, equip=partida.equips[1])
+			aux.points+=3
+	#print clasification.equips
 	clasification.save()
 		
 
@@ -561,6 +575,12 @@ def updateClasification(results, journey):
 
 def sendInfo():
 	pass
+
+def finishMatch(request,pk):
+	match = Partida.objects.get(id=pk)
+	match.finish()
+	match.save()
+	return HttpResponseRedirect('/jornades/%s/' % (match.jornada.id))
 
 
 def finishJourney(request, pk):

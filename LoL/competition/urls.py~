@@ -1,0 +1,33 @@
+from django.conf.urls import patterns, url
+from django.views.generic import ListView, DetailView
+from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail, jornadesList, jornadaDetail
+
+urlpatterns = patterns('',
+	url(r'^$', indexView.as_view()),
+	#url(r'^register','competition.views.nuevo_usuario'),
+	url(r'^login','competition.views.loginUser'),
+	url(r'^privado','competition.views.privado'),
+	url(r'^cerrar','competition.views.cerrar'),
+	url(r'^teamregister','competition.views.nuevo_equipo_jugador'),
+	#url(r'^playerregister','competition.views.nuevo_jugador'),
+	url(r'^recount',recountInsc.as_view()),
+	url(r'^team/(?P<pk>\d+)/$', teamDetail.as_view(),name='team_detail'),
+	url(r'^jugadors','competition.views.inscrits'),
+	#url(r'^enviarmisatge','competition.views.enviarInfo'),
+	url(r'^team/(?P<pk>\d+)/validate','competition.views.validate', name='validate_team'),
+	#url(r'^validate','competition.views.Comprovacio'),
+	url(r'^generar','competition.views.generarHoraris'),
+	url(r'^edit','competition.views.editPlayers'),
+	url(r'^calendar/$', viewCalendar.as_view()),
+	url(r'^calendar/(?P<pk>\d+)/$',leagueDetail.as_view(),name='league_detail'),
+	url(r'^team/(?P<pk>\d+)\.(?P<extension>(json|xml))$', teamDetail.as_view(),name='team_detail'),
+	url(r'^calendar/(?P<pk>\d+)\.(?P<extension>(json|xml))$', leagueDetail.as_view(),name='league_detail'),
+	url(r'^status','competition.views.getStatus'),
+	url(r'^reclamation','competition.views.sendReclamation'),
+	url(r'^jornades/$',jornadesList.as_view()),
+	url(r'^jornades/(?P<pk>\d+)/$',jornadaDetail.as_view(),name='jornada_detail'),
+	url(r'^jornades/(?P<pk>\d+)/start','competition.views.startJourney',name='start_journey'),
+	url(r'^jornades/(?P<pk>\d+)/finish','competition.views.finishJourney',name='finish_journey'),
+	url(r'^jornades/(?P<pk>\d+)/finishmatch','competition.views.finishMatch',name='finish_match')
+)
+

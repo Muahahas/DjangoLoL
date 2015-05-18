@@ -8,9 +8,11 @@
 			{% if partida.equips.all.count == 1 %}
 				<li>El {{partida.equips.all.0}} descansa aquesta jornada.</li><br>
 				{% else %}
-				<li>{{partida}}</li>
+				<form action="{% url 'competition:finish_match' partida.id %}">
+				<li>{{partida}}{% if partida.iniciada %}  <input type="submit" name="list" value="Finish" />			
+				{% endif %}</li></form>	
 				<ul>
-				<li>{{partida.equips.all.0 }}  VS. {{partida.equips.all.1}}</li>
+				<li>{{partida.equips.all.0 }}  VS. {{partida.equips.all.1}} </li>
 				</ul>
 			{% endif %}				
 	{% endfor %}
@@ -19,7 +21,7 @@
 <form action="{% url 'competition:start_journey' jornada.id %}">
 <input type="submit" name="list" value="Start" />
 </form>
-{% elif jornada.iniciada %}
+{% elif jornada.iniciada and jornada.partidesAcabades %}
 <form action="{% url 'competition:finish_journey' jornada.id %}">
 <input type="submit" name="list" value="Finish" />
 </form>

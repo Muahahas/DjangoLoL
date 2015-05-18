@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from django.views.generic import ListView, DetailView
-from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail, jornadesList, jornadaDetail
+from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail, jornadesList, jornadaDetail, jornadesComensades
 
 urlpatterns = patterns('',
 	url(r'^$', indexView.as_view()),
@@ -27,6 +27,8 @@ urlpatterns = patterns('',
 	url(r'^jornades/$',jornadesList.as_view()),
 	url(r'^jornades/(?P<pk>\d+)/$',jornadaDetail.as_view(),name='jornada_detail'),
 	url(r'^jornades/(?P<pk>\d+)/start','competition.views.startJourney',name='start_journey'),
-	url(r'^jornades/(?P<pk>\d+)/finish','competition.views.finishJourney',name='finish_journey')
+	url(r'^jornades/(?P<pk>\d+)/finish','competition.views.finishJourney',name='finish_journey'),
+	url(r'^jornades/(?P<pk>\d+)/endmatch','competition.views.finishMatch',name='finish_match'),
+	url(r'^jornadesC/$',jornadesComensades.as_view()),
 )
 

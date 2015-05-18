@@ -55,6 +55,7 @@ class Jornada(models.Model):
 	league = models.ForeignKey(Lliga)
 	iniciada = models.BooleanField(default=False)
 	acabada = models.BooleanField(default=False)
+	#partidesAcab = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'Jornada nº %d de la  %s' % (self.codi, self.league)
@@ -68,6 +69,14 @@ class Jornada(models.Model):
 		self.acabada = True
 		self.save()
 
+	def partidesAcabades(self):
+		partida = Partida.objects.filter(jornada=self)
+		a = True
+		for item in partida:
+			a = a and item.acabada
+		return a
+
+
 class Partida(models.Model):
 	codi = models.IntegerField(default=0)
 	ip = models.CharField(max_length= 15)
@@ -75,6 +84,15 @@ class Partida(models.Model):
 	jornada = models.ForeignKey(Jornada)
 	iniciada = models.BooleanField(default=False)
 	acabada = models.BooleanField(default=False)
+
+	def finish(self):
+		self.acabada = True
+		self.iniciada = False
+		self.save()
+		
+	def start(self):
+		self.iniciada = True
+		self.save()
 
 	def __unicode__(self):
 		return u'Partida nº %d de la %s' % (self.codi, self.jornada)
@@ -103,9 +121,15 @@ class Resultat(models.Model):
 
 	partida = models.OneToOneField(Partida)
 
+
 class Classificacio(models.Model):
 	league = models.OneToOneField(Lliga)
-	equips = dict()
+	
+
+class EquipPosition(models.Model):
+	points = models.IntegerField(default=0)
+	equip = models.ForeignKey(Equip)
+	clas = models.ForeignKey(Classificacio)
 
 
 
