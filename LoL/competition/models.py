@@ -44,6 +44,7 @@ class Jugador(models.Model):
 
 class Lliga(models.Model):
 	codi = models.IntegerField(default=0)
+	equips = models.ManyToManyField(Equip)
 
 	def __unicode__(self):
 		return u'Lliga nº %d' % (self.codi)
@@ -85,6 +86,7 @@ class Estadistiques(models.Model):
 	
 	team = models.ForeignKey(Equip)
 
+	
 
 class Resultat(models.Model):
 
@@ -96,7 +98,17 @@ class Resultat(models.Model):
 	killsEquipB = models.IntegerField(default=0)
 	assistEquipB = models.IntegerField(default=0)
 
+	#0 = empat, 1 = winnerTeamA , 2 = winnerTeamB
+	winner = models.IntegerField(default=0)
+
 	partida = models.OneToOneField(Partida)
+
+class Classificacio(models.Model):
+	league = models.OneToOneField(Lliga)
+	equips = dict()
+
+
+
 
 
 class Reclamacio(models.Model):

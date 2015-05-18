@@ -373,6 +373,7 @@ def generarJornades(teams, lliga):
 				match.equips.add(team1)
 			else:
 				match.codi = e+1
+				print team1
 				match.equips.add(team1)
 				match.equips.add(team2)
 				e+=1
@@ -387,6 +388,7 @@ def generarHoraris(request):
 	if lliguesAnteriors:
 		for item in lliguesAnteriors:
 			item.delete()
+
 	teams = list(Equip.objects.filter(isTeamValid = True))
 	if not teams:
 		return render_to_response('competition/pocsusers.html',{'n':0})
@@ -416,6 +418,9 @@ def generarHoraris(request):
 	for item in equipsPerLliga:
 		lliga = Lliga()
 		lliga.codi = i+1
+		lliga.save()
+		for team in item:
+			lliga.equips.add(team)
 		lliga.save()
 		generarJornades(item, lliga)
 		i+=1
@@ -499,37 +504,72 @@ def getTeamsWaiting():
 def asignIP():
 	pass
 
-def createResults():
-	pass
+def createResults(journey):
+	partides = Partida.objects.filter(jornada=journey)
+	for partida in partides:
+		result = Resultat()
+		result.partida = partida
+		result.save()	
 
 def startJourney(request,pk):
+	journey = Jornada.objects.get(id=pk)
 	getTeamsWaiting()
 	asignIP()
-	createResults()
+	createResults(journey)
 	journey = Jornada.objects.get(id=pk)
 	if not journey.iniciada and not journey.acabada:
 		journey.start()
 	return HttpResponseRedirect('/jornades/%s/' % (pk))
 
-def getResults():
-	pass
+def getResults(journey):
+	partides = Partida.objects.filter(jornada=journey)
+	results = []
+	for partida in partides:
+		results = results + list(Resultat.objects.filter(partida=partida))
+	return results
 
-def createClasification():
-	pass
 
-def updateClasification():
-	pass
+
+
+def createClasification(journey):
+	classificacions_anteriors = Classificacio.objects.filter(league=journey.league)
+	if classificacions_anteriors:
+		classificacions_anteriors.delete()
+	clasification = Classificacio()
+	lliga = Lliga.objects.get(id=journey.league.id)
+	clasification.league = journey.league
+	#equips = lliga.equips.all()
+	#for item in journey.league.equips:
+	clasification.equips = dict(zip((t for t in lliga.equips.all()),(0 for n in xrange(lliga.equips.all().count()))))
+	print clasification.equips	
+	clasification.save()
+
+	
+def updateClasification(results, journey):
+	clasification = Classificacio.objects.get(league=journey.league)	
+	for item in results:
+		partida = item.partida
+		if item.winner == 1:
+			clasification.equips[partida.equips[0]]=+3
+		elif item.winner == 2:
+			clasification.equips[partida.equips[0]]=+3
+	print clasification.equips
+	clasification.save()
+		
+
+
 
 def sendInfo():
 	pass
 
 
 def finishJourney(request, pk):
-	getResults()
-	createClasification()
-	updateClasification()
-	sendInfo()
 	journey = Jornada.objects.get(id=pk)
+	results = getResults(journey)
+	if journey.codi == 1:
+		createClasification(journey)
+	updateClasification(results,journey)
+	sendInfo()	
 	if journey.iniciada and not journey.acabada:
 		journey.finish()
 	return HttpResponseRedirect('/jornades/%s/' % (pk))
