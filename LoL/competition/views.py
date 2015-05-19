@@ -16,6 +16,7 @@ import json
 import smtplib
 import string
 import urllib2
+import random
 
 from itertools import izip
 import math
@@ -344,9 +345,11 @@ def generarJornades(teams, lliga):
 			if  team1.username == '':
 				match.codi = 0
 				match.equips.add(team2)
+				match.acabada=True
 			elif team2.username == '':
 				match.codi = 0
 				match.equips.add(team1)
+				match.acabada=True
 			else:
 				match.codi = e+1
 				print team1
@@ -489,6 +492,9 @@ def createResults(journey):
 	for partida in partides:
 		result = Resultat()
 		result.partida = partida
+		if partida.codi > 0:
+			result.winner = random.randint(0,2)
+			print result.winner
 		result.save()	
 
 def startJourney(request,pk):
@@ -537,12 +543,15 @@ def updateClasification(results, journey):
 	clasification = Classificacio.objects.get(league=journey.league)	
 	for item in results:
 		partida = item.partida
-		if item.winner == 1:
-			aux = EquipPosition.objects.filter(clas=clasification, equip=partida.equips[0])
+		if item.winner == 1 and partida.codi > 0:
+			aux = list(EquipPosition.objects.filter(clas=clasification, equip=partida.equips.all())).pop(0)
+			print aux
 			aux.points+=3
-		elif item.winner == 2:
-			aux = EquipPosition.objects.filter(clas=clasification, equip=partida.equips[1])
+			aux.save()
+		elif item.winner == 2 and partida.codi > 0:
+			aux = list(EquipPosition.objects.filter(clas=clasification, equip=partida.equips.all())).pop(1)
 			aux.points+=3
+			aux.save()
 	#print clasification.equips
 	clasification.save()
 		
@@ -557,8 +566,8 @@ def sendInfo(journey):
 	password = "1994iole"
 	body_text = serializers.serialize(u"xml", [clasification]+partides+results)
 	toaddrs = []
-	toaddrs.append("eloibuisan@gmail.com")
-	toaddrs.append("mart.a94@hotmail.com")
+	toaddrs.append("marketing@mark.com")
+	toaddrs.append("riot@lol.com")
 	server = smtplib.SMTP('alumnes.udl.cat:465')
 	BODY = string.join((
             "From: %s" % username,
@@ -600,5 +609,6 @@ def finishJourney(request, pk):
 def viewClasification(request):
 	clasification = Classificacio.objects.all()
 	positions = [list(EquipPosition.objects.filter(clas=clasif).order_by('points')) for clasif in clasification]
-
+	for item in positions:
+		item.reverse()
 	return render_to_response('competition/clasification.html',{'clasification':clasification,'positions':positions, 'rounds':xrange(clasification.count())},context_instance=RequestContext(request))
