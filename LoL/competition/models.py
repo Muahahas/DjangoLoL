@@ -121,6 +121,9 @@ class Resultat(models.Model):
 
 	partida = models.OneToOneField(Partida)
 
+	def __unicode__(self):
+		return u'Resultat de la %s' % self.partida
+
 
 class Classificacio(models.Model):
 	league = models.OneToOneField(Lliga)
