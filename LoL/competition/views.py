@@ -366,7 +366,11 @@ def generarHoraris(request):
 	lliguesAnteriors = list(Lliga.objects.all())
 	if lliguesAnteriors:
 		for item in lliguesAnteriors:
+			for equip in item.equips.all():
+				stat = Estadistiques.objects.get(team=equip)
+				stat.delete()
 			item.delete()
+			
 
 	teams = list(Equip.objects.filter(isTeamValid = True))
 	if not teams:
@@ -425,7 +429,7 @@ class leagueDetail(DetailView, ConnegResponseMixin):
 
 def getStatus(request):
 	#lol = LeagueOfLegends('e34cddf8-4d00-41e9-9ff7-e744f7fb189c')
-	regions = ['br','eune','euw','lan','las','oce','ru','tr'] #'pbe'
+	regions = ['br','eune','euw','lan','las','oce','ru','tr','pbe'] #'pbe'
 	stats = ['online','alert','offline','deploying']
 	url = ["http://status.leagueoflegends.com/shards/%s" % (item) for item in regions]
 	try:
@@ -495,7 +499,11 @@ def createResults(journey):
 		if partida.codi > 0:
 			result.winner = random.randint(0,2)
 			print result.winner
-		result.save()	
+		result.save()
+	for item in journey.league.equips.all():
+		stadistics = Estadistiques()
+		stadistics.team = item
+		stadistics.save()	
 
 def startJourney(request,pk):
 	journey = Jornada.objects.get(id=pk)
@@ -552,6 +560,18 @@ def updateClasification(results, journey):
 			aux = list(EquipPosition.objects.filter(clas=clasification, equip=partida.equips.all())).pop(1)
 			aux.points+=3
 			aux.save()
+			
+		if item.winner == 0 and partida.codi > 0:
+			if item.killsEquipA- item.mortsEquipA + (0.2 * item.assistEquipA)> item.killsEquipB- item.mortsEquipB + (0.2 * item.assistEquipB):
+				aux = list(EquipPosition.objects.filter(clas=clasification, equip=partida.equips.all())).pop(0)
+				aux.points+=3
+				aux.save()
+			else:
+				aux = list(EquipPosition.objects.filter(clas=clasification, equip=partida.equips.all())).pop(1)
+				aux.points+=3
+				aux.save()
+			
+				
 	#print clasification.equips
 	clasification.save()
 		
@@ -566,7 +586,7 @@ def sendInfo(journey):
 	password = "1994iole"
 	body_text = serializers.serialize(u"xml", [clasification]+partides+results)
 	toaddrs = []
-	toaddrs.append("marketing@mark.com")
+	toaddrs.append("eloibuisan@gmail.com")
 	toaddrs.append("riot@lol.com")
 	server = smtplib.SMTP('alumnes.udl.cat:465')
 	BODY = string.join((
@@ -590,7 +610,7 @@ def sendInfo(journey):
 def finishMatch(request,pk):
 	match = Partida.objects.get(id=pk)
 	match.finish()
-	match.save()
+	match.save()	
 	return HttpResponseRedirect('/jornades/%s/' % (match.jornada.id))
 
 
@@ -609,6 +629,16 @@ def finishJourney(request, pk):
 def viewClasification(request):
 	clasification = Classificacio.objects.all()
 	positions = [list(EquipPosition.objects.filter(clas=clasif).order_by('points')) for clasif in clasification]
+	llista = []
+	
 	for item in positions:
 		item.reverse()
-	return render_to_response('competition/clasification.html',{'clasification':clasification,'positions':positions, 'rounds':xrange(clasification.count())},context_instance=RequestContext(request))
+		auxPos = []
+		i=1
+		for pos in item:
+			auxPos.append([pos,i])
+			i+=1
+		llista.append(auxPos)
+
+
+	return render_to_response('competition/clasification.html',{'clasification':clasification,'positions':llista, 'rounds':xrange(clasification.count())},context_instance=RequestContext(request))

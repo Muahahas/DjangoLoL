@@ -42,15 +42,40 @@ Gestio d'una competicio de League of Legends
 
 
 =======
-	
-#SPRINT ACTUAL:
+#SPRINT Actual>
+Resolucio Reclamacio
+Enviar resolucio al equip i marketing
+obtenir equips espera
+asignar IPs
+publicar noticia
 
-	Generar horari (Fet: falta posar la data de moment fica l'actual) (sabem que les partides duren 1h, oalmenys aixi ho vam definir amb la Oliva, aleshores, com ha maxim son 48 partides x jornada, ja q son 2 dies, i cada dia son 24h/24 partits. Cada partit té 2 equip. Les jornades dependran del nombre d'inscripcions)
-	Recontar inscripcions(FET(Es mostren el numero i el llistat, pero nomes amb l'user, tot i aixi es pot deshabilitar) i vull mostrar el nombre d'activats pero es complicat)
+#Sprint Seguent
+Top 25
+Identificar jugador top
+
+
+
+
+
+#SPRINT Anterior:
+
+	Formulari reclamaciò
+	Finalitzar una jornada.
+	Obtenir resultats
+	Crear clasificació
+	Preparar nova jornada
+
+
+
+	
+#SPRINT Anterior:
+
+	Generar horari (Fet)
+	Recontar inscripcions(FET)
 	Enviar informació(FET)
-	Registre equip(Faltaria arreglar que mires que no hi hagi cap jugador amb el mateix nom ni correu(de moment a la BD el nom no esta unique per a testejar millor))
-	Comprobaciò usuaris(Funcio JSON)
-	Generar documents XML(Com a la prac de SITW) (Correcte)(De que s'ha de generar XML? Dels equips i jugadors inscrits o dels horaris o estadistiques i resultats? o tot xD
+	Registre equip(Fet)
+	Comprobaciò usuaris(Fet)
+	Generar documents XML(Fet)
 
 #Errors a corregir
 

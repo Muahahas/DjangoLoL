@@ -42,7 +42,22 @@ Gestio d'una competicio de League of Legends
 
 
 =======
-#SPRINT Actual:
+#SPRINT Actual>
+Resolucio Reclamacio
+Enviar resolucio al equip i marketing
+obtenir equips espera
+asignar IPs
+publicar noticia
+
+#Sprint Seguent
+Top 25
+Identificar jugador top
+
+
+
+
+
+#SPRINT Anterior:
 
 	Formulari reclamaciò
 	Finalitzar una jornada.

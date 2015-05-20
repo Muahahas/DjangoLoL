@@ -7,18 +7,18 @@
 <ul>
 	<li><a href ='/recount'>Recompte Equips</a></li>	
 	{% if user.username %}
-	<li><a href='/jugadors'>Jugadors</a></li>
+	{#<li><a href='/jugadors'>Jugadors</a></li>#}
 	{% endif %}
 	<li><a href='/calendar'>Calendari</a></li>
 	{#<li><a href='/enviarmisatge'>Missatge</a></li>#}
 	<li><a href='/status'>Server status</a></li>
 	{% if user.is_staff %}
-	<li><a href='/generar'>Crear Horari</a></li>
+	{#<li><a href='/generar'>Crear Horari</a></li>#}
 	{% elif user.username %}
 	<li><a href="/reclamation">Reclamacio</a></li>
 	{% endif %}	
-	<li><a href="/jornades">Jornades</a></li>
-	<li><a href='/jornadesC'>Jornades Comensades</a></li>
+	{#<li><a href="/jornades">Proximes Jornades</a></li>#}
+	{#<li><a href='/jornadesC'>Jornades Comensades</a></li>#}
 	<li><a href="/classificacio">Classificacio</a></li>
 	
 </ul>

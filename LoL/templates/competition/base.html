@@ -9,7 +9,58 @@
 
     <body>
     <header>
-        {% block header %}{% endblock %}
+        <div id='cssmenu'>
+            <ul>
+             <li class='active'><a href='/'>Inicio</a></li>
+             {% if user.is_staff %}
+             <li class='has-sub '><a href="">Admin</a>
+                <ul>
+                    <li><a href='/admin'>Super Admin Mode</a></li>
+                    <li><a href='/generar'>Crear Horari</a></li>
+                    <li><a href="">Jornades</a>
+                        <ul>
+                            <li><a href="/jornades">Proximes Jornades</a></li>
+                            <li><a href='/jornadesC'>Jornades Comensades</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            {% elif user.username %}
+            <li><a href='/jugadors'>Jugadors</a></li>
+            {% endif %}
+            {% if user.username %}            
+            <li class='has-sub '><a href=''>Account</a>
+                <ul>                    
+                    <li><a href='/privado'>Panel Privado</a></li>
+                    <li><a href='/cerrar'>Logout</a></li>
+                </ul>
+            </li>
+            {% else %}
+            <li><a href='/login'>Login</a></li>
+            <li><a href='/teamregister'>Registrar equip</a></li>
+            {% endif %}
+             <li class='has-sub '><a href='#'>Products</a>
+                <ul>
+                   <li class='has-sub '><a href='#'>Product 1</a>
+                      <ul>
+                         <li><a href='#'>Sub Item</a></li>
+                         <li><a href='#'>Sub Item</a></li>
+                      </ul>
+                   </li>
+                   <li class='has-sub '><a href='#'>Product 2</a>
+                      <ul>
+                         <li><a href='#'>Sub Item</a></li>
+                         <li><a href='#'>Sub Item</a></li>
+                      </ul>
+                   </li>
+                </ul>
+             </li>
+             <li><a href='#'>About</a></li>
+             <li><a href='#'>Contact</a></li>
+          </ul>
+        </div> 
+        {% block header %}
+        {% endblock %} 
         <nav>
         <ul id='menu'>
             <!--<li><a href='/register'>Registro</a></li>-->
