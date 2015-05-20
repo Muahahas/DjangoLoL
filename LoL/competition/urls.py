@@ -30,6 +30,7 @@ urlpatterns = patterns('',
 	url(r'^jornades/(?P<pk>\d+)/finish','competition.views.finishJourney',name='finish_journey'),
 	url(r'^jornades/(?P<pk>\d+)/endmatch','competition.views.finishMatch',name='finish_match'),
 	url(r'^jornadesC/$',jornadesComensades.as_view()),
-	url(r'^classificacio/$','competition.views.viewClasification')
+	url(r'^classificacio/$','competition.views.viewClasification'),
+	url(r'^teamReady/(?P<pk>\d+)/$','competition.views.teamReady',name='team_ready')
 )
 

@@ -10,6 +10,7 @@ class Equip(auth.models.User):
 	
 	correoe = models.EmailField('email',null=False,unique=True,)
 	isTeamValid = models.BooleanField(default=False)
+	isReady = models.BooleanField(default=False)
 		
 
 	def __unicode__(self):
@@ -22,6 +23,15 @@ class Equip(auth.models.User):
 	def desvalidar(self):
 		self.isTeamValid = False
 		self.save()
+
+	def ready(self):
+		self.isReady = True
+		self.save()
+
+	def unready(self):
+		self.isReady=False
+		self.save()
+
 
 class Jugador(models.Model):
 	ROL_CHOICES = [
@@ -55,7 +65,7 @@ class Jornada(models.Model):
 	league = models.ForeignKey(Lliga)
 	iniciada = models.BooleanField(default=False)
 	acabada = models.BooleanField(default=False)
-	#partidesAcab = models.BooleanField(default=False)
+	isReady = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'Jornada nº %d de la  %s' % (self.codi, self.league)
@@ -67,6 +77,10 @@ class Jornada(models.Model):
 	def finish(self):
 		self.iniciada = False
 		self.acabada = True
+		self.save()
+
+	def ready(self):
+		self.isReady=True
 		self.save()
 
 	def partidesAcabades(self):
@@ -85,10 +99,15 @@ class Partida(models.Model):
 	iniciada = models.BooleanField(default=False)
 	acabada = models.BooleanField(default=False)
 
+	def setIP(self,ip):
+		self.ip = ip
+		self.save()
+
 	def finish(self):
 		self.acabada = True
 		self.iniciada = False
 		self.save()
+
 		
 	def start(self):
 		self.iniciada = True

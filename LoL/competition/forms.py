@@ -58,7 +58,7 @@ class nouEquip(ModelForm):
 	class Meta:
 		fields = ("username","correoe",)
 		model = Equip
-		exclude = ['groups','user_permissions','is_staff','is_active','is_superuser','last_login','date_joined','isTeamValid']
+		exclude = ['groups','user_permissions','is_staff','is_active','is_superuser','last_login','date_joined','isTeamValid','ready']
 
 	def save(self, commit=True):
 		equip = super(nouEquip, self).save(commit=False)

@@ -9,6 +9,20 @@
 			<p>L'equip encara esta pendent de validar-se<p>
 		{% else %}
 			<p>L'equip esta validat per tant podra jugar a la competició</p>
+			{% if not equip.isReady %}
+			<form action="{% url 'competition:team_ready' equip.id %}" >		
+				<br><p><input type="submit" value="Ready" /></p>
+			</form>
+			{% elif equip.isReady %}
+				{% if ip %}
+					IP:{{ip}}<br>
+				{% else %}
+				Encara no tens ip assignada recarga en uns moments per comprovar si ja esta asignada.<br><br>
+				<form action='/privado'>		
+					<br><p><input type="submit" value="Reload" /></p>
+				</form>
+				{%endif%}
+			{% endif %}
 		{% endif %}
-	{% endif %}
+	{% endif %}	
 {% endblock %}

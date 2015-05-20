@@ -9,15 +9,16 @@
 				<li>El {{partida.equips.all.0}} descansa aquesta jornada.</li><br>
 				{% else %}
 				<form action="{% url 'competition:finish_match' partida.id %}">
-				<li>{{partida}}{% if partida.iniciada %}  <input type="submit" name="list" value="Finish" />			
+				<li>{{partida}}{% if partida.iniciada %}<input type="submit" name="list" value="Finish" />
 				{% endif %}</li></form>	
 				<ul>
-				<li>{{partida.equips.all.0 }}  VS. {{partida.equips.all.1}} </li>
+				<li>{{partida.equips.all.0 }}  VS. {{ partida.equips.all.1}}{% if not partida.equips.all.0.isReady and not partida.equips.all.1.isReady and not partida.acabada %}<script type="text/javascript" > var a = true </script> Els equips encara no estan preparats. {% endif %}</li>
 				</ul>
 			{% endif %}				
 	{% endfor %}
 </ul>
-{% if not jornada.iniciada and not jornada.acabada %}
+{% if not jornada.iniciada and not jornada.acabada and jornada.isReady %}
+
 <form action="{% url 'competition:start_journey' jornada.id %}">
 <input type="submit" name="list" value="Start" />
 </form>

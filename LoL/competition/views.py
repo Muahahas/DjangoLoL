@@ -18,6 +18,7 @@ import string
 import urllib2
 import random
 
+
 from itertools import izip
 import math
 import decimal
@@ -121,7 +122,11 @@ def privado(request):
 		return render_to_response('competition/privado.html', {'usuario':usuario}, context_instance=RequestContext(request))	
 	else:
 		equip = Equip.objects.get(username__iexact = unicode(usuario.username))
-		return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
+		ip = list(Partida.objects.filter(equips=equip)[:1]).pop().ip
+		if ip:
+			return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'ip':ip}, context_instance=RequestContext(request))
+		else:
+			return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
 
 
 
@@ -367,7 +372,7 @@ def generarHoraris(request):
 	if lliguesAnteriors:
 		for item in lliguesAnteriors:
 			for equip in item.equips.all():
-				stat = Estadistiques.objects.get(team=equip)
+				stat = Estadistiques.objects.filter(team=equip)
 				stat.delete()
 			item.delete()
 			
@@ -470,6 +475,14 @@ class jornadesList(ListView):
 	context_object_name = 'listJornades'
 	template_name = 'competition/jornades_list.html'
 
+def jornadaCheck(journey):
+	partides = Partida.objects.filter(jornada=journey)
+	a = True
+	for partida in partides:
+		for equip in partida.equips.all():
+			a = a and equip.ready
+	if a:
+		journey.ready()
 
 class jornadaDetail(DetailView):
 	model = Jornada
@@ -478,6 +491,8 @@ class jornadaDetail(DetailView):
 
 	def get_context_data(self, **kwargs):
 		context = super(jornadaDetail,self).get_context_data(**kwargs)
+		print kwargs
+		jornadaCheck(kwargs['object'])
 		return context
 
 class jornadesComensades(ListView):
@@ -485,11 +500,37 @@ class jornadesComensades(ListView):
 	context_object_name = 'listJornades'
 	template_name = 'competition/jornades_listC.html'
 
-def getTeamsWaiting():
-	pass
+def getTeamsWaiting(journey):
+	partides = Partida.objects.filter(jornada=journey)
+	llistaEquips = []
+	for partida in partides:
+		if not partida.codi == 0:
+			for equip in partida.equips.all():
+				if equip.isReady:
+					llistaEquips.append(equip)
 
-def asignIP():
-	pass
+	return llistaEquips
+
+	
+
+def asignIP(teams):
+	print teams
+	for team1, team2 in pairwise(teams):
+		try:
+			resp = urllib2.urlopen("http://127.0.0.1:3333/")
+		except urllib2.HTTPError, err:
+			return HttpResponse('Error de conexio amb el ip-generator')
+		except urllib2.URLError, err:
+			return HttpResponse('Error de conexio amb el ip-generator')
+		data = json.load(resp)
+		partida = list(Partida.objects.filter(equips=team1).filter(equips=team2)).pop()
+		#match = Partida.objects.get(id=partida.id)
+		ip = "%s" % data['generated-ip']
+		partida.setIP(ip)
+		print partida.ip
+		partida.save()
+		
+	
 
 def createResults(journey):
 	partides = Partida.objects.filter(jornada=journey)
@@ -498,7 +539,6 @@ def createResults(journey):
 		result.partida = partida
 		if partida.codi > 0:
 			result.winner = random.randint(0,2)
-			print result.winner
 		result.save()
 	for item in journey.league.equips.all():
 		stadistics = Estadistiques()
@@ -507,8 +547,8 @@ def createResults(journey):
 
 def startJourney(request,pk):
 	journey = Jornada.objects.get(id=pk)
-	getTeamsWaiting()
-	asignIP()
+	teams = getTeamsWaiting(journey)
+	asignIP(teams)
 	createResults(journey)
 	journey = Jornada.objects.get(id=pk)
 	partides = Partida.objects.filter(jornada=journey)
@@ -610,7 +650,9 @@ def sendInfo(journey):
 def finishMatch(request,pk):
 	match = Partida.objects.get(id=pk)
 	match.finish()
-	match.save()	
+	match.save()
+	for equip in match.equips.all():
+		equip.unready()
 	return HttpResponseRedirect('/jornades/%s/' % (match.jornada.id))
 
 
@@ -642,3 +684,16 @@ def viewClasification(request):
 
 
 	return render_to_response('competition/clasification.html',{'clasification':clasification,'positions':llista, 'rounds':xrange(clasification.count())},context_instance=RequestContext(request))
+
+
+
+
+def teamReady(request,pk):
+	equip = Equip.objects.get(id=pk)
+	#partida = list(Partida.objects.filter(equips=equip)).pop()
+	equip.ready()
+	equip.save()
+	return HttpResponseRedirect('/privado')
+	
+
+
