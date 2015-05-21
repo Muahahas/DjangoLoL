@@ -11,7 +11,6 @@ class Equip(auth.models.User):
 	correoe = models.EmailField('email',null=False,unique=True,)
 	isTeamValid = models.BooleanField(default=False)
 	isReady = models.BooleanField(default=False)
-		
 
 	def __unicode__(self):
 		return u'Team ' + super(self.__class__, self).get_username()
@@ -31,6 +30,17 @@ class Equip(auth.models.User):
 	def unready(self):
 		self.isReady=False
 		self.save()
+
+class EquipXML(models.Model):
+	username = models.CharField(max_length=50)
+	email = models.CharField(max_length=50)
+	isTeamValid = models.BooleanField(default=False)
+
+	def __init__(self, equip):
+		self.username = equip.username
+		self.email = equip.correoe
+		self.isTeamValid = equip.isTeamValid
+		#self.players = list(Jugador.objects.filter(team=equip))
 
 
 class Jugador(models.Model):

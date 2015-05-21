@@ -17,6 +17,7 @@ import smtplib
 import string
 import urllib2
 import random
+import xml.etree.ElementTree as ET
 
 
 from itertools import izip
@@ -31,16 +32,22 @@ from django.contrib.auth.models import User
 
 
 # Create your views here.
+
+	
 class ConnegResponseMixin(TemplateResponseMixin):
 
     def render_xml_object_response(self, objects, **kwargs):
     	if objects[0].__class__ == Lliga:
     		object_list = Jornada.objects.filter(league=objects[0])
     		objects = objects + list(object_list)
+    		xml_data = serializers.serialize(u"xml", objects, **kwargs)
+    		
     	elif objects[0].__class__ == Equip:
-    		object_list = Jugador.objects.filter(team=objects[0])
+    		player_list = list(Jugador.objects.filter(team=objects[0]))
     		objects = objects + list(object_list)
-    	xml_data = serializers.serialize(u"xml", objects, **kwargs)
+    		xml_data = serializers.serialize(u"xml", objects, **kwargs)
+    	else:
+    		xml_data = serializers.serialize(u"xml", objects, **kwargs)
         return HttpResponse(xml_data, content_type=u"application/xml")
 
     def render_to_response(self, context, **kwargs):
@@ -372,6 +379,8 @@ def generarHoraris(request):
 	if lliguesAnteriors:
 		for item in lliguesAnteriors:
 			for equip in item.equips.all():
+				#equip.unready()
+				equip.ready()
 				stat = Estadistiques.objects.filter(team=equip)
 				stat.delete()
 			item.delete()
@@ -479,8 +488,9 @@ def jornadaCheck(journey):
 	partides = Partida.objects.filter(jornada=journey)
 	a = True
 	for partida in partides:
-		for equip in partida.equips.all():
-			a = a and equip.ready
+		if not partida.codi == 0:
+			for equip in partida.equips.all():
+				a = a and equip.isReady
 	if a:
 		journey.ready()
 
@@ -514,21 +524,26 @@ def getTeamsWaiting(journey):
 	
 
 def asignIP(teams):
-	print teams
+	ERR = False
 	for team1, team2 in pairwise(teams):
 		try:
-			resp = urllib2.urlopen("http://127.0.0.1:3333/")
-		except urllib2.HTTPError, err:
-			return HttpResponse('Error de conexio amb el ip-generator')
+			jsonIP = urllib2.urlopen("http://127.0.0.1:3333/")
 		except urllib2.URLError, err:
+			print err
 			return HttpResponse('Error de conexio amb el ip-generator')
-		data = json.load(resp)
+		if not jsonIP:
+			ERR = True
+		data = json.load(jsonIP)
 		partida = list(Partida.objects.filter(equips=team1).filter(equips=team2)).pop()
 		#match = Partida.objects.get(id=partida.id)
 		ip = "%s" % data['generated-ip']
 		partida.setIP(ip)
 		print partida.ip
 		partida.save()
+		return ERR
+	
+	
+
 		
 	
 
@@ -548,7 +563,7 @@ def createResults(journey):
 def startJourney(request,pk):
 	journey = Jornada.objects.get(id=pk)
 	teams = getTeamsWaiting(journey)
-	asignIP(teams)
+	err = asignIP(teams)	
 	createResults(journey)
 	journey = Jornada.objects.get(id=pk)
 	partides = Partida.objects.filter(jornada=journey)
@@ -556,6 +571,8 @@ def startJourney(request,pk):
 		journey.start()
 	for item in partides:
 		item.start()
+	if err:
+		return HttpResponse('Error de conexio amb el ip-generator')
 	return HttpResponseRedirect('/jornades/%s/' % (pk))
 
 def getResults(journey):

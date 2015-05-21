@@ -45,13 +45,18 @@ Gestio d'una competicio de League of Legends
 #SPRINT Actual>
 Resolucio Reclamacio
 Enviar resolucio al equip i marketing
-obtenir equips espera
-asignar IPs
+obtenir equips espera (FET)
+asignar IPs (FET)
 publicar noticia
 
 #Sprint Seguent
 Top 25
 Identificar jugador top
+
+#Coses a reparar:
+getStatus, pillar del shards i fer un urlopen a cada slug.
+
+xml jerarquic
 
 
 
