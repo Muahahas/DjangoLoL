@@ -5,7 +5,8 @@ from datetime import datetime
 #from django.utils import timezone
 from django.contrib import auth
 # Create your models here.
-
+import dexml
+from dexml import fields
 class Equip(auth.models.User):
 	
 	correoe = models.EmailField('email',null=False,unique=True,)
@@ -31,18 +32,6 @@ class Equip(auth.models.User):
 		self.isReady=False
 		self.save()
 
-class EquipXML(models.Model):
-	username = models.CharField(max_length=50)
-	email = models.CharField(max_length=50)
-	isTeamValid = models.BooleanField(default=False)
-
-	def __init__(self, equip):
-		self.username = equip.username
-		self.email = equip.correoe
-		self.isTeamValid = equip.isTeamValid
-		#self.players = list(Jugador.objects.filter(team=equip))
-
-
 class Jugador(models.Model):
 	ROL_CHOICES = [
 		('Top','Top'),
@@ -60,6 +49,33 @@ class Jugador(models.Model):
 
 	def __unicode__(self):
 		return u"%s" % self.name
+
+class JugadorXML(dexml.Model):
+	name = fields.String()
+	rol = fields.String()
+	email = fields.String()
+	tagname="Person"
+
+	def __init__(self, player):
+		self.name = player.name
+		self.rol = player.rol
+		self.email = player.email
+
+
+class EquipXML(dexml.Model):
+	username = fields.String()
+	email = fields.String()
+	players = fields.List(Jugador)
+	
+
+	def __init__(self, equip):
+		self.username = equip.username
+		self.email = equip.correoe
+		for item in Jugador.objects.filter(team=equip):
+			self.players.append(JugadorXML(item))
+
+
+
 
 
 class Lliga(models.Model):

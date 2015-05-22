@@ -31,8 +31,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 
-# Create your views here.
 
+# Create your views here.
 	
 class ConnegResponseMixin(TemplateResponseMixin):
 
@@ -43,9 +43,9 @@ class ConnegResponseMixin(TemplateResponseMixin):
     		xml_data = serializers.serialize(u"xml", objects, **kwargs)
     		
     	elif objects[0].__class__ == Equip:
-    		player_list = list(Jugador.objects.filter(team=objects[0]))
-    		objects = objects + list(object_list)
-    		xml_data = serializers.serialize(u"xml", objects, **kwargs)
+    		team_xml = EquipXML(objects[0])
+    		xml_data = team_xml.render()
+    		
     	else:
     		xml_data = serializers.serialize(u"xml", objects, **kwargs)
         return HttpResponse(xml_data, content_type=u"application/xml")
