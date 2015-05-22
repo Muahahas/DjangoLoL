@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from django.views.generic import ListView, DetailView
-from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail, jornadesList, jornadaDetail, jornadesComensades
+from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail, jornadesList, jornadaDetail, jornadesComensades, reclamacionsList
 
 urlpatterns = patterns('',
 	url(r'^$', indexView.as_view()),
@@ -23,7 +23,7 @@ urlpatterns = patterns('',
 	url(r'^team/(?P<pk>\d+)\.(?P<extension>(json|xml))$', teamDetail.as_view(),name='team_detail'),
 	url(r'^calendar/(?P<pk>\d+)\.(?P<extension>(json|xml))$', leagueDetail.as_view(),name='league_detail'),
 	url(r'^status','competition.views.getStatus'),
-	url(r'^reclamation','competition.views.sendReclamation'),
+	url(r'^sendreclamation','competition.views.sendReclamation'),
 	url(r'^jornades/$',jornadesList.as_view()),
 	url(r'^jornades/(?P<pk>\d+)/$',jornadaDetail.as_view(),name='jornada_detail'),
 	url(r'^jornades/(?P<pk>\d+)/start','competition.views.startJourney',name='start_journey'),
@@ -31,6 +31,8 @@ urlpatterns = patterns('',
 	url(r'^jornades/(?P<pk>\d+)/endmatch','competition.views.finishMatch',name='finish_match'),
 	url(r'^jornadesC/$',jornadesComensades.as_view()),
 	url(r'^classificacio/$','competition.views.viewClasification'),
-	url(r'^teamReady/(?P<pk>\d+)/$','competition.views.teamReady',name='team_ready')
+	url(r'^teamReady/(?P<pk>\d+)/$','competition.views.teamReady',name='team_ready'),
+	url(r'^reclamations/$', reclamacionsList.as_view()),
+	url(r'^reclamations/(?P<pk>\d+)/$','competition.views.responseReclamation',name='response_reclamation')
 )
 

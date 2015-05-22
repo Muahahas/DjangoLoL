@@ -14,8 +14,9 @@
 	<li><a href='/status'>Server status</a></li>
 	{% if user.is_staff %}
 	{#<li><a href='/generar'>Crear Horari</a></li>#}
+	<li><a href='/reclamations'>Reclamations</a></li>
 	{% elif user.username %}
-	<li><a href="/reclamation">Reclamacio</a></li>
+	<li><a href="/sendreclamation">Reclamacio</a></li>
 	{% endif %}	
 	{#<li><a href="/jornades">Proximes Jornades</a></li>#}
 	{#<li><a href='/jornadesC'>Jornades Comensades</a></li>#}

@@ -714,3 +714,16 @@ def teamReady(request,pk):
 	
 
 
+class reclamacionsList(ListView):
+	template_name = 'competition/reclamations.html'
+	queryset=Reclamacio.objects.filter(solved=False)
+	context_object_name='reclamations'
+
+def responseReclamation(request,pk):
+	reclamation = Reclamacio.objects.get(id=pk)
+	if request.method=='POST':
+		pass
+
+	else:
+		reclamationForm = reclamacioResposta(instance=reclamation)
+	return render_to_response('competition/response_reclamation.html',{'reclamationForm':reclamationForm,'reclamation':reclamation}, context_instance=RequestContext(request))

@@ -1,0 +1,16 @@
+{% extends "competition/base.html" %}
+{% block header %}{{reclamation}}{% endblock %}
+{% block content %}
+<h1>
+Response Reclamation
+</h1>
+<br>
+<ul>
+<li>Partida: {{reclamation.partida}}</li>
+<li>Jugador: {{reclamation.jugador}}</li>
+<li>Motiu: {{reclamation.text}}</li>
+<form id='formulario' method='POST' action=''>{% csrf_token %}{{ reclamationForm.as_p }}
+	</br>	
+	<p><input type='submit' value='Confirmar'/></p>
+</form>
+{% endblock %}

@@ -89,7 +89,7 @@ class reclamacioForm(ModelForm):
 		jornada = None
 		lliga = None
 		model = Reclamacio
-		exclude = ['team','jornada', 'lliga']
+		exclude = ['team','jornada', 'lliga','solved','response']
 		
 	def __init__(self,team, *args, **kwargs):
 		super(reclamacioForm,self).__init__(*args,**kwargs)
@@ -107,3 +107,10 @@ class reclamacioForm(ModelForm):
 		if commit:
 				reclamacio.save()
 		return reclamacio
+
+class reclamacioResposta(ModelForm):
+	response = forms.CharField(label=("Response: "), max_length=300, widget=forms.Textarea)
+
+	class Meta:
+		model = Reclamacio
+		exclude=['team','jornada', 'lliga','solved','jugador','text','partida']

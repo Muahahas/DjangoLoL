@@ -1,0 +1,10 @@
+{% extends "competition/base.html" %}
+{% block header %}Reclamacions{% endblock %}
+{% block content %}
+<ul>
+{% for reclamation in reclamations %}
+<li><a href='{% url 'competition:response_reclamation' reclamation.id %}'>{{reclamation}}</a></li>
+{% empty %}Encara no hi ha reclamacions.<br>
+{% endfor%}
+</ul>
+{% endblock %}

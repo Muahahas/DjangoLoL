@@ -54,7 +54,6 @@ class JugadorXML(dexml.Model):
 	name = fields.String()
 	rol = fields.String()
 	email = fields.String()
-	tagname="Person"
 
 	def __init__(self, player):
 		self.name = player.name
@@ -200,6 +199,8 @@ class Reclamacio(models.Model):
 		partida = models.ForeignKey(Partida)
 
 		text = models.CharField(max_length=300)
+		response = models.CharField(null=True,max_length=300)
+		solved = models.BooleanField(default=False)
 
 		class Meta:
 			unique_together = ['jugador','partida']
