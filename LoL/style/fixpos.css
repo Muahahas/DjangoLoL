@@ -1,0 +1,12 @@
+p.pos_fixed{
+  position: fixed;
+  top: -5px;
+  right: 10px;
+  color: red;
+}
+div.pos_fixed{
+  position: fixed;
+  top: 35px;
+  right: 10px;
+  color: red;
+}

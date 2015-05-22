@@ -128,10 +128,16 @@ def privado(request):
 	if usuario.is_staff:	
 		return render_to_response('competition/privado.html', {'usuario':usuario}, context_instance=RequestContext(request))	
 	else:
-		equip = Equip.objects.get(username__iexact = unicode(usuario.username))
-		ip = list(Partida.objects.filter(equips=equip)[:1]).pop().ip
-		if ip:
-			return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'ip':ip}, context_instance=RequestContext(request))
+		equip = Equip.objects.get(username__iexact = unicode(usuario.username))		
+		partida = list(Partida.objects.filter(equips=equip)[:1]).pop()
+		if partida:
+			if partida.codi == 0:
+				wait = True
+				return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'wait':wait}, context_instance=RequestContext(request))
+			elif partida.ip:
+				return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'ip':ip}, context_instance=RequestContext(request))
+			else:
+				return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
 		else:
 			return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
 
@@ -379,8 +385,8 @@ def generarHoraris(request):
 	if lliguesAnteriors:
 		for item in lliguesAnteriors:
 			for equip in item.equips.all():
-				#equip.unready()
-				equip.ready()
+				equip.unready()
+				#equip.ready()
 				stat = Estadistiques.objects.filter(team=equip)
 				stat.delete()
 			item.delete()
@@ -719,11 +725,40 @@ class reclamacionsList(ListView):
 	queryset=Reclamacio.objects.filter(solved=False)
 	context_object_name='reclamations'
 
+
+def sendResponse(reclamation):	
+	username = "ebm7@alumnes.udl.cat"
+	password = "1994iole"
+	body_text = 'Jugador: %s \nEquip: %s\nReclamacio: %s\nResposta %s\n' % (reclamation.jugador, reclamation.jugador.team, reclamation.text, reclamation.response)
+	toaddrs = []
+	toaddrs.append("eloibuisan@gmail.com")
+	toaddrs.append("riot@lol.com")
+	server = smtplib.SMTP('alumnes.udl.cat:465')
+	BODY = string.join((
+            "From: %s" % username,
+            "To: %s" % ', '.join(toaddrs),
+            "Subject: Reclamation %s" % reclamation ,
+            "",
+            body_text), "\r\n")
+
+	server.starttls()
+	server.login(username,password)
+	try:
+		server.sendmail(username, toaddrs, BODY)
+		server.quit()
+	except:
+		server.quit()
+		return HttpResponse('Error')
+	return HttpResponse('Enviat')
+
 def responseReclamation(request,pk):
 	reclamation = Reclamacio.objects.get(id=pk)
 	if request.method=='POST':
-		pass
-
+		formulario = reclamacioResposta(request.POST, request.FILES, instance=reclamation)
+		if formulario.is_valid():
+			reclamation = formulario.save()
+			sendResponse(reclamation)
+			return HttpResponseRedirect('/reclamations/')
 	else:
-		reclamationForm = reclamacioResposta(instance=reclamation)
-	return render_to_response('competition/response_reclamation.html',{'reclamationForm':reclamationForm,'reclamation':reclamation}, context_instance=RequestContext(request))
+		formulario = reclamacioResposta(instance=reclamation)
+	return render_to_response('competition/response_reclamation.html',{'formulario':formulario,'reclamation':reclamation}, context_instance=RequestContext(request))

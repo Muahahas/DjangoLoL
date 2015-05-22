@@ -115,6 +115,7 @@ class reclamacioResposta(ModelForm):
 		model = Reclamacio
 		exclude=['team','jornada', 'lliga','solved','jugador','text','partida']
 
+
 	def save(self):
 		reclamacio = super(reclamacioResposta, self).save(commit=False)
 		reclamacio.solved = True		

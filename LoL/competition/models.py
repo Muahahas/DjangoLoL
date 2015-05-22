@@ -82,7 +82,7 @@ class Lliga(models.Model):
 	equips = models.ManyToManyField(Equip)
 
 	def __unicode__(self):
-		return u'Lliga nº %d' % (self.codi)
+		return u'Lliga n %d' % (self.codi)
 
 class Jornada(models.Model):
 	codi = models.IntegerField(default=0)
@@ -93,7 +93,7 @@ class Jornada(models.Model):
 	isReady = models.BooleanField(default=False)
 
 	def __unicode__(self):
-		return u'Jornada nº %d de la  %s' % (self.codi, self.league)
+		return u'Jornada n %d de la  %s' % (self.codi, self.league)
 
 	def start(self):
 		self.iniciada = True
@@ -139,7 +139,7 @@ class Partida(models.Model):
 		self.save()
 
 	def __unicode__(self):
-		return u'Partida nº %d de la %s' % (self.codi, self.jornada)
+		return u'Partida n %d de la %s' % (self.codi, self.jornada)
 
 class Estadistiques(models.Model):
 	mortsEquip = models.IntegerField(default=0)
@@ -173,7 +173,7 @@ class Classificacio(models.Model):
 	league = models.OneToOneField(Lliga)
 
 	def __unicode__(self):
-		return u'Classificacio de la lliga: nº %d' % self.league.codi 
+		return u'Classificacio de la lliga: n %d' % self.league.codi 
 	
 
 class EquipPosition(models.Model):
@@ -192,15 +192,17 @@ class EquipPosition(models.Model):
 
 
 class Reclamacio(models.Model):
-		team = models.ForeignKey(Equip)	
-		jornada = models.ForeignKey(Jornada)
-		lliga = models.ForeignKey(Lliga)
-		jugador = models.ForeignKey(Jugador)
-		partida = models.ForeignKey(Partida)
+	team = models.ForeignKey(Equip)	
+	jornada = models.ForeignKey(Jornada)
+	lliga = models.ForeignKey(Lliga)
+	jugador = models.ForeignKey(Jugador)
+	partida = models.ForeignKey(Partida)
+	text = models.CharField(max_length=300)
+	response = models.CharField(blank=True,max_length=300)
+	solved = models.BooleanField(default=False)
 
-		text = models.CharField(max_length=300)
-		response = models.CharField(null=True,max_length=300)
-		solved = models.BooleanField(default=False)
+	class Meta:
+		unique_together = ['jugador','partida']
 
-		class Meta:
-			unique_together = ['jugador','partida']
+	def __unicode__(self):
+		return u'Reclamacio de %s de la %s' % (self.jugador, self.partida)

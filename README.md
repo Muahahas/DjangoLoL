@@ -43,8 +43,8 @@ Gestio d'una competicio de League of Legends
 
 =======
 #SPRINT Actual>
-Resolucio Reclamacio
-Enviar resolucio al equip i marketing
+Resolucio Reclamacio(FET)
+Enviar resolucio al equip i marketing(FET)
 obtenir equips espera (FET)
 asignar IPs (FET)
 publicar noticia
@@ -56,7 +56,7 @@ Identificar jugador top
 #Coses a reparar:
 getStatus, pillar del shards i fer un urlopen a cada slug.
 
-xml jerarquic
+xml jerarquic(Fet per a equip i jugadors, faltaria per al calendari i un xml que s'envia per correu)
 
 
 

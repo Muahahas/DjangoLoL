@@ -5,12 +5,13 @@ from datetime import datetime
 #from django.utils import timezone
 from django.contrib import auth
 # Create your models here.
-
+import dexml
+from dexml import fields
 class Equip(auth.models.User):
 	
 	correoe = models.EmailField('email',null=False,unique=True,)
 	isTeamValid = models.BooleanField(default=False)
-		
+	isReady = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'Team ' + super(self.__class__, self).get_username()
@@ -21,6 +22,14 @@ class Equip(auth.models.User):
 		
 	def desvalidar(self):
 		self.isTeamValid = False
+		self.save()
+
+	def ready(self):
+		self.isReady = True
+		self.save()
+
+	def unready(self):
+		self.isReady=False
 		self.save()
 
 class Jugador(models.Model):
@@ -41,6 +50,32 @@ class Jugador(models.Model):
 	def __unicode__(self):
 		return u"%s" % self.name
 
+class JugadorXML(dexml.Model):
+	name = fields.String()
+	rol = fields.String()
+	email = fields.String()
+
+	def __init__(self, player):
+		self.name = player.name
+		self.rol = player.rol
+		self.email = player.email
+
+
+class EquipXML(dexml.Model):
+	username = fields.String()
+	email = fields.String()
+	players = fields.List(Jugador)
+	
+
+	def __init__(self, equip):
+		self.username = equip.username
+		self.email = equip.correoe
+		for item in Jugador.objects.filter(team=equip):
+			self.players.append(JugadorXML(item))
+
+
+
+
 
 class Lliga(models.Model):
 	codi = models.IntegerField(default=0)
@@ -55,6 +90,7 @@ class Jornada(models.Model):
 	league = models.ForeignKey(Lliga)
 	iniciada = models.BooleanField(default=False)
 	acabada = models.BooleanField(default=False)
+	isReady = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'Jornada nº %d de la  %s' % (self.codi, self.league)
@@ -68,19 +104,42 @@ class Jornada(models.Model):
 		self.acabada = True
 		self.save()
 
+	def ready(self):
+		self.isReady=True
+		self.save()
+
+	def partidesAcabades(self):
+		partida = Partida.objects.filter(jornada=self)
+		a = True
+		for item in partida:
+			a = a and item.acabada
+		return a
+
+
 class Partida(models.Model):
 	codi = models.IntegerField(default=0)
 	ip = models.CharField(max_length= 15)
 	equips = models.ManyToManyField(Equip)
 	jornada = models.ForeignKey(Jornada)
-	#iniciada = models.BooleanField(default=False)
+	iniciada = models.BooleanField(default=False)
 	acabada = models.BooleanField(default=False)
+
+	def setIP(self,ip):
+		self.ip = ip
+		self.save()
 
 	def finish(self):
 		self.acabada = True
+		self.iniciada = False
+		self.save()
+
+		
+	def start(self):
+		self.iniciada = True
+		self.save()
 
 	def __unicode__(self):
-		return u'Partida nº %d de la %s' % (self.codi, self.jornada)
+		return u'Partida n %d de la %s' % (self.codi, self.jornada)
 
 class Estadistiques(models.Model):
 	mortsEquip = models.IntegerField(default=0)
@@ -106,8 +165,15 @@ class Resultat(models.Model):
 
 	partida = models.OneToOneField(Partida)
 
+	def __unicode__(self):
+		return u'Resultat de la %s' % self.partida
+
+
 class Classificacio(models.Model):
 	league = models.OneToOneField(Lliga)
+
+	def __unicode__(self):
+		return u'Classificacio de la lliga: n %d' % self.league.codi 
 	
 
 class EquipPosition(models.Model):
@@ -115,18 +181,28 @@ class EquipPosition(models.Model):
 	equip = models.ForeignKey(Equip)
 	clas = models.ForeignKey(Classificacio)
 
+	class Meta:
+		ordering = ['points']
+
+	def __unicode__(self):
+		return u'%s          Points: %d' % (self.equip,self.points)
+
 
 
 
 
 class Reclamacio(models.Model):
-		team = models.ForeignKey(Equip)	
-		jornada = models.ForeignKey(Jornada)
-		lliga = models.ForeignKey(Lliga)
-		jugador = models.ForeignKey(Jugador)
-		partida = models.ForeignKey(Partida)
+	team = models.ForeignKey(Equip)	
+	jornada = models.ForeignKey(Jornada)
+	lliga = models.ForeignKey(Lliga)
+	jugador = models.ForeignKey(Jugador)
+	partida = models.ForeignKey(Partida)
+	text = models.CharField(max_length=300)
+	response = models.CharField(blank=True,max_length=300)
+	solved = models.BooleanField(default=False)
 
-		text = models.CharField(max_length=300)
+	class Meta:
+		unique_together = ['jugador','partida']
 
-		class Meta:
-			unique_together = ['jugador','partida']
+	def __unicode__(self):
+		return u'Reclamacio de %s de la %s' % (self.jugador, self.partida)

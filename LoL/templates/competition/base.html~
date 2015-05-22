@@ -2,11 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <script type="text/javascript" src="{% static "countdown.js" %}"></script>        
+        <script type="text/javascript" src="{% static "countdown.js" %}"></script>
       	<link rel="stylesheet" href="{% static "base.css" %}" />
-      	<link rel="stylesheet" href="{% static "fixpos.css" %}" />        
-        <script type="text/javascript" src="{% static "title.js" %}"></script>
-        
+      	<link rel="stylesheet" href="{% static "fixpos.css" %}" />
         <title>{% block title %}LOL{% endblock %}</title>
 
     </head>
@@ -85,17 +83,14 @@
             </nav>
             <hr>
             
-    </header>
-	{% block Tempo %}
-        <p class="pos_fixed">Temps per a la competició:</p>
-        <div class="pos_fixed" id="countbox1"></div>
-  {% endblock %}
-  <h3 class="" id="cc-m-header-6314871852">TITOL ANIMAT</h3>
-  <div id="content">
+    </header>    
+        
+
+        <div id="content">
             {% block content %}
                 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
             {% endblock %}
-  </div>
+        </div>
 
         <div id="footer">
             {% block footer %}{% endblock %}

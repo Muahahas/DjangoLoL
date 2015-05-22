@@ -9,9 +9,9 @@
 			<p>L'equip encara esta pendent de validar-se<p>
 		{% else %}
 			<p>L'equip esta validat per tant podra jugar a la competició</p>
-			{% if wait %}
+			{%if wait%}
 			L'equip descansa aquesta jornada<br>
-			{% else %}
+			{% elif %}
 			{% if not equip.isReady %}
 			<form action="{% url 'competition:team_ready' equip.id %}" >		
 				<br><p><input type="submit" value="Ready" /></p>
