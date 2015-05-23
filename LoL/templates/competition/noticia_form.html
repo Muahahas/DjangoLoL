@@ -1,0 +1,8 @@
+{% extends 'competition/base.html' %}
+{% block header %}Publicar Noticia{% endblock %}
+{% block content%}
+	<form id='formulario' method='POST' action=''>{% csrf_token %}
+	{{ formulario.as_p }}
+	<p><input type='submit' value='Confirmar'/></p>
+	</form>
+{% endblock %}

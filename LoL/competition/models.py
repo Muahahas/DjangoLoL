@@ -188,9 +188,6 @@ class EquipPosition(models.Model):
 		return u'%s          Points: %d' % (self.equip,self.points)
 
 
-
-
-
 class Reclamacio(models.Model):
 	team = models.ForeignKey(Equip)	
 	jornada = models.ForeignKey(Jornada)
@@ -206,3 +203,11 @@ class Reclamacio(models.Model):
 
 	def __unicode__(self):
 		return u'Reclamacio de %s de la %s' % (self.jugador, self.partida)
+
+class Noticia(models.Model):
+	titol = models.CharField(max_length=50)
+	cosNoticia = models.CharField(max_length=400)
+	date = models.DateTimeField(default=datetime.now())
+
+	def __unicode__(self):
+		return u'%s' % self.titol

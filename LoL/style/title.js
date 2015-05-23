@@ -74,7 +74,7 @@ if (document.documentElement)
         // Off we go!
         var h1Anim = new HeaderFader(
                 'h3',
-                ['#FFFFFF', '#DDDDDD', '#BBBBBB', '#999999', '#777777', '#555555']
+                ['#FFFFFF','#F90A0A', '#DDDDDD','#FF0000' '#BBBBBB', '#999999', '#777777', '#555555']
         );
         //h1Anim.left = true; // Try setting to false if using text-align: right;
         //h1Anim.frames = 10;

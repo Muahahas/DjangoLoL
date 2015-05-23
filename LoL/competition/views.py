@@ -17,7 +17,7 @@ import smtplib
 import string
 import urllib2
 import random
-import xml.etree.ElementTree as ET
+
 
 
 from itertools import izip
@@ -67,7 +67,6 @@ class jugadorComprovacio():
 def Comprovacio(equip, players):
 	json_file = 'jugadors.json'
 	juga = jugadorComprovacio()		
-	#jugadors= '0'
    	json_data=open(json_file)
    	data = json.load(json_data)
    	json_data.close()
@@ -170,17 +169,29 @@ def teamSave(list):
 	 	listP.append(player)
 	 return listP
 
-
-
-def enviarConfirmacio(equip, players):
+def enviarEmail(body, toaddrs):
 	username = "ebm7@alumnes.udl.cat"
 	password = "1994iole"
+	server = smtplib.SMTP('alumnes.udl.cat:465')
+	server.starttls()
+	server.login(username,password)
+	try:
+		server.sendmail(username, toaddrs, body)
+		server.quit()
+	except smtplib.SMTPConnectError:
+		server.quit()
+		return HttpResponse('Error')
+	return HttpResponse('Enviat')
+
+
+
+def enviarConfirmacio(equip, players):	
 	body_text = "El equip %s ha sigut registrat amb els jugadors %s, %s, %s, %s i %s" % (equip, players[0],players[1],players[2],players[3],players[4])
 	toaddrs = []
 	toaddrs.append(equip.correoe)
 	for item in players:
-		toaddrs.append(item.email)
-	server = smtplib.SMTP('alumnes.udl.cat:465')
+		toaddrs.append(item.email)	
+	username = "ebm7@alumnes.udl.cat"
 	BODY = string.join((
             "From: %s" % username,
             "To: %s" % ', '.join(toaddrs),
@@ -188,15 +199,8 @@ def enviarConfirmacio(equip, players):
             "",
             body_text
             ), "\r\n")
-	server.starttls()
-	server.login(username,password)
-	try:
-		server.sendmail(username, toaddrs, BODY)
-		server.quit()
-	except:
-		server.quit()
-		return HttpResponse('Error')
-	return HttpResponse('Enviat')
+	return enviarEmail(BODY,toaddrs)
+	
 
 
 
@@ -236,7 +240,7 @@ def nuevo_equipo_jugador(request):
 	return render_to_response('competition/equipform.html',{'form_team':form_team, 'form_player_list':form_player_list},context_instance=RequestContext(request))
 
 
-
+"""
 @login_required(login_url='/login')
 def nuevo_jugador(request):
 	equip = Equip.objects.get(username__iexact = unicode(request.user.username))
@@ -248,6 +252,7 @@ def nuevo_jugador(request):
 	else:
 		formulario = jugadorForm(equip)
 	return render_to_response('competition/jugadorform.html',{'formulario':formulario}, context_instance=RequestContext(request))
+"""
 
 class recountInsc(ListView):
 
@@ -314,11 +319,11 @@ def validate(request, pk):
 	else:
 		team.validat()	
 	return HttpResponseRedirect('/team/%s/' % (pk))
-
+"""
 def enviarInfo(request):
 	pass
 	
-
+"""
 def pairwise(iterable):
     "s -> (s0,s1), (s2,s3), (s4, s5), ..."
     a = iter(iterable)
@@ -449,7 +454,16 @@ class leagueDetail(DetailView, ConnegResponseMixin):
 
 def getStatus(request):
 	#lol = LeagueOfLegends('e34cddf8-4d00-41e9-9ff7-e744f7fb189c')
-	regions = ['br','eune','euw','lan','las','oce','ru','tr','pbe'] #'pbe'
+	try:
+		response =urllib2.urlopen("http://status.leagueoflegends.com/shards")
+	except urllib2.HTTPError, err:
+		return render_to_response('competition/servers.html',{'err':err},context_instance=RequestContext(request))
+	data = json.load(response)
+	regions=[]
+	for item in data:
+		regions.append(item["slug"])
+		
+	#regions = ['br','eune','euw','lan','las','oce','ru','tr'] #'pbe'
 	stats = ['online','alert','offline','deploying']
 	url = ["http://status.leagueoflegends.com/shards/%s" % (item) for item in regions]
 	try:
@@ -646,12 +660,10 @@ def sendInfo(journey):
 	partides = list(Partida.objects.filter(jornada=journey))
 	results = [Resultat.objects.get(partida=partida) for partida in partides]
 	username = "ebm7@alumnes.udl.cat"
-	password = "1994iole"
-	body_text = serializers.serialize(u"xml", [clasification]+partides+results)
+	body_text = serializers.serialize(u"xml", [clasification]+partides+results) ##Arreglar XML
 	toaddrs = []
 	toaddrs.append("eloibuisan@gmail.com")
 	toaddrs.append("riot@lol.com")
-	server = smtplib.SMTP('alumnes.udl.cat:465')
 	BODY = string.join((
             "From: %s" % username,
             "To: %s" % ', '.join(toaddrs),
@@ -659,16 +671,8 @@ def sendInfo(journey):
             "",
             body_text
             ), "\r\n")
+	return enviarEmail(BODY,toaddrs)
 
-	server.starttls()
-	server.login(username,password)
-	try:
-		server.sendmail(username, toaddrs, BODY)
-		server.quit()
-	except:
-		server.quit()
-		return HttpResponse('Error')
-	return HttpResponse('Enviat')
 
 def finishMatch(request,pk):
 	match = Partida.objects.get(id=pk)
@@ -728,28 +732,18 @@ class reclamacionsList(ListView):
 
 def sendResponse(reclamation):	
 	username = "ebm7@alumnes.udl.cat"
-	password = "1994iole"
 	body_text = 'Jugador: %s \nEquip: %s\nReclamacio: %s\nResposta %s\n' % (reclamation.jugador, reclamation.jugador.team, reclamation.text, reclamation.response)
 	toaddrs = []
 	toaddrs.append("eloibuisan@gmail.com")
 	toaddrs.append("riot@lol.com")
-	server = smtplib.SMTP('alumnes.udl.cat:465')
 	BODY = string.join((
             "From: %s" % username,
             "To: %s" % ', '.join(toaddrs),
             "Subject: Reclamation %s" % reclamation ,
             "",
             body_text), "\r\n")
+	return enviarEmail(BODY,toaddrs)
 
-	server.starttls()
-	server.login(username,password)
-	try:
-		server.sendmail(username, toaddrs, BODY)
-		server.quit()
-	except:
-		server.quit()
-		return HttpResponse('Error')
-	return HttpResponse('Enviat')
 
 def responseReclamation(request,pk):
 	reclamation = Reclamacio.objects.get(id=pk)
@@ -762,3 +756,28 @@ def responseReclamation(request,pk):
 	else:
 		formulario = reclamacioResposta(instance=reclamation)
 	return render_to_response('competition/response_reclamation.html',{'formulario':formulario,'reclamation':reclamation}, context_instance=RequestContext(request))
+
+
+class noticiesView(ListView):
+	queryset = Noticia.objects.order_by('date')[:5]
+	context_object_name='llista'
+	template_name='competition/notices.html'
+
+class noticiesDetail(DetailView):
+	model = Noticia
+	template_name = 'competition/noticies_detail.html'
+
+	def get_context_data(self, **kwargs):
+		context = super(noticiesDetail,self).get_context_data(**kwargs)
+		return context
+
+def enviarNoticia(request):
+	if request.method == 'POST':
+		formulario = noticiaForm(request.POST, request.FILES)
+		if formulario.is_valid():
+			formulario.save()
+			return HttpResponseRedirect('/noticies')
+	else:
+		formulario = noticiaForm()
+	return render_to_response('competition/noticia_form.html',{'formulario':formulario},context_instance=RequestContext(request))
+		

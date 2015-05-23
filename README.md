@@ -54,7 +54,7 @@ Top 25
 Identificar jugador top
 
 #Coses a reparar:
-getStatus, pillar del shards i fer un urlopen a cada slug.
+getStatus, pillar del shards i fer un urlopen a cada slug. (FET)
 
 xml jerarquic(Fet per a equip i jugadors, faltaria per al calendari i un xml que s'envia per correu)
 

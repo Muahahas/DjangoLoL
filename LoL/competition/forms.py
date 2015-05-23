@@ -120,3 +120,9 @@ class reclamacioResposta(ModelForm):
 		reclamacio.solved = True		
 		reclamacio.save()
 		return reclamacio
+
+
+class noticiaForm(ModelForm):
+	class Meta:
+		model = Noticia
+		exclude = ['date']

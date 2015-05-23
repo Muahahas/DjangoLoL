@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from django.views.generic import ListView, DetailView
-from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail, jornadesList, jornadaDetail, jornadesComensades, reclamacionsList
+from views import indexView, recountInsc, teamDetail, viewCalendar, leagueDetail, jornadesList, jornadaDetail, jornadesComensades, reclamacionsList, noticiesView, noticiesDetail
 
 urlpatterns = patterns('',
 	url(r'^$', indexView.as_view()),
@@ -33,6 +33,9 @@ urlpatterns = patterns('',
 	url(r'^classificacio/$','competition.views.viewClasification'),
 	url(r'^teamReady/(?P<pk>\d+)/$','competition.views.teamReady',name='team_ready'),
 	url(r'^reclamations/$', reclamacionsList.as_view()),
-	url(r'^reclamations/(?P<pk>\d+)/$','competition.views.responseReclamation',name='response_reclamation')
+	url(r'^reclamations/(?P<pk>\d+)/$','competition.views.responseReclamation',name='response_reclamation'),
+	url(r'^noticies/$',noticiesView.as_view()),
+	url(r'^noticies/(?P<pk>\d+)/$',noticiesDetail.as_view(),name='noticia_detail'),
+	url(r'^noticies/crear','competition.views.enviarNoticia'),
 )
 
