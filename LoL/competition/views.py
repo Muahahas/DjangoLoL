@@ -394,8 +394,7 @@ def generarHoraris(request):
 				#equip.ready()
 				stat = Estadistiques.objects.filter(team=equip)
 				stat.delete()
-			item.delete()
-			
+			item.delete()					
 
 	teams = list(Equip.objects.filter(isTeamValid = True))
 	if not teams:
@@ -432,9 +431,17 @@ def generarHoraris(request):
 		lliga.save()
 		generarJornades(item, lliga)
 		i+=1
-	
+	#return HttpResponseRedirect('/succesfulcreated/')
 	return render_to_response('competition/calendariFet.html',{'n':i},context_instance=RequestContext(request))
 
+
+def cargaHoraris(request):
+		return render_to_response('competition/carga_horaris.html',context_instance=RequestContext(request))
+
+def horariCreat(request):
+		return render_to_response('competition/calendariFet.html',{'n':Lliga.objects.all().count()},context_instance=RequestContext(request))
+	
+		
 class viewCalendar(ListView):
 	queryset = Lliga.objects.all()
 	context_object_name = 'list'
@@ -457,6 +464,8 @@ def getStatus(request):
 	try:
 		response =urllib2.urlopen("http://status.leagueoflegends.com/shards")
 	except urllib2.HTTPError, err:
+		return render_to_response('competition/servers.html',{'err':err},context_instance=RequestContext(request))
+	except urllib2.URLError, err:
 		return render_to_response('competition/servers.html',{'err':err},context_instance=RequestContext(request))
 	data = json.load(response)
 	regions=[]

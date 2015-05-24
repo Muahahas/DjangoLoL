@@ -2,46 +2,47 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <script type="text/javascript" src="{% static "countdown.js" %}"></script>        
-      	<link rel="stylesheet" href="{% static "base.css" %}" />
-      	<link rel="stylesheet" href="{% static "fixpos.css" %}" />        
-        <script type="text/javascript" src="{% static "title.js" %}"></script>
-        
-        <title>{% block title %}LOL{% endblock %}</title>
+    <script type="text/javascript" src="{% static "countdown.js" %}"></script>
+    <script type="text/javascript" src="{% static "title.js" %}"></script>
+    <link rel="stylesheet" href="{% static "fixpos.css" %}" />
+    <link rel="stylesheet" href="{% static "base.css" %}" />
 
+    {% block cssjs %}{% endblock %}         
+    <title>{% block title %}LOL{% endblock %}</title>
     </head>
-
     <body>
-    <header>
+      <header>
         <div id='cssmenu'>
-            <ul>
-             <li class='active'><a href='/'>Inicio</a></li>
-             {% if user.is_staff %}
-             <li class='has-sub '><a href="">Admin</a>
-                <ul>
+          <ul>
+            <li class='active'><a href='/'>Inicio</a></li>
+              {% if user.is_staff %}
+                <li class='has-sub '><a href="">Admin</a>
+                  <ul>
                     <li><a href='/admin'>Super Admin Mode</a></li>
-                    <li><a href='/generar'>Crear Horari</a></li>
+                    <li><a href="{% url 'competition:create' %}">Crear Horari</a></li>
                     <li><a href="">Jornades</a>
-                        <ul>
-                            <li><a href="/jornades">Proximes Jornades</a></li>
-                            <li><a href='/jornadesC'>Jornades Comensades</a></li>
-                        </ul>
+                      <ul>
+                        <li><a href="/jornades">Proximes Jornades</a></li>
+                        <li><a href='/jornadesC'>Jornades Comensades</a></li>
+                      </ul>
                     </li>
-                </ul>
-            </li>
-            {% elif user.username %}
-            <li><a href='/jugadors'>Jugadors</a></li>
-            {% endif %}
-            {% if user.username %}            
-            <li class='has-sub '><a href=''>Account</a>
+                  </ul>
+                </li>
+                <li><a href="/reclamations">Reclamacions</a></li>
+              {% elif user.username %}
+                <li><a href='/jugadors'>Jugadors</a></li>
+                <li><a href="/sendreclamation">Enviar Reclamació</a></li>
+              {% endif %}
+              {% if user.username %}            
+              <li class='has-sub '><a href=''>Account</a>
                 <ul>                    
-                    <li><a href='/privado'>Panel Privado</a></li>
-                    <li><a href='/cerrar'>Logout</a></li>
+                  <li><a href='/privado'>Panel Privado</a></li>
+                  <li><a href='/cerrar'>Logout</a></li>
                 </ul>
-            </li>
+              </li>
             {% else %}
-            <li><a href='/login'>Login</a></li>
-            <li><a href='/teamregister'>Registrar equip</a></li>
+              <li><a href='/login'>Login</a></li>
+              <li><a href='/teamregister'>Registrar equip</a></li>
             {% endif %}
              <li class='has-sub '><a href='#'>Products</a>
                 <ul>
@@ -90,7 +91,7 @@
         <p class="pos_fixed">Temps per a la competició:</p>
         <div class="pos_fixed" id="countbox1"></div>
   {% endblock %}
-  <h3 class="" id="cc-m-header-6314871852">TITOL ANIMAT</h3>
+  <h3>Titol Animat</h3>
   <div id="content">
             {% block content %}
                 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}

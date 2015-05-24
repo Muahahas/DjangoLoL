@@ -78,4 +78,4 @@ if (document.documentElement)
         );
         //h1Anim.left = true; // Try setting to false if using text-align: right;
         //h1Anim.frames = 10;
-}
+};

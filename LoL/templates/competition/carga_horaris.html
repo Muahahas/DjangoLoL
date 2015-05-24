@@ -1,0 +1,35 @@
+{% extends "competition/base.html" %}
+{% load staticfiles %}
+{% block cssjs %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+      $(document).ready(function(){
+        $("#hide").click(function(){
+            $("progress").hide();
+        });
+        $("#show").click(function(){
+          $("#show").hide();
+          $("progress").show();
+          $.ajax({
+            url: "/generar/",
+            success: function(response) {
+              window.location.href = '/succesfulcreated'   
+            },
+          });
+        });
+      });
+    </script>
+{% endblock %}
+
+{% block header %}Crear un nou horari{% endblock %}
+{% block content %}
+<h1>Generar Horaris</h1>
+
+
+<button id="show">Generate</button>
+
+<progress hidden max='70'></progress>
+<p id = "succes" hidden >CALENDARI CREAT CORRECTAMENT</p>
+
+
+{% endblock %}
