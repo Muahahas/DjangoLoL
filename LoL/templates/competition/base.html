@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-    <script type="text/javascript" src="{% static "countdown.js" %}"></script>
     <script type="text/javascript" src="{% static "title.js" %}"></script>
+    <script type="text/javascript" src="{% static "countdown.js" %}"></script>    
     <link rel="stylesheet" href="{% static "fixpos.css" %}" />
     <link rel="stylesheet" href="{% static "base.css" %}" />
-
+    <link rel="stylesheet" type="text/css" href="{% static "messages.css"%}"/>
     {% block cssjs %}{% endblock %}         
     <title>{% block title %}LOL{% endblock %}</title>
     </head>
@@ -19,19 +19,25 @@
                 <li class='has-sub '><a href="">Admin</a>
                   <ul>
                     <li><a href='/admin'>Super Admin Mode</a></li>
-                    <li><a href="{% url 'competition:create' %}">Crear Horari</a></li>
                     <li><a href="">Jornades</a>
                       <ul>
                         <li><a href="/jornades">Proximes Jornades</a></li>
                         <li><a href='/jornadesC'>Jornades Comensades</a></li>
                       </ul>
                     </li>
+                    <li><a href="{% url 'competition:create' %}">Crear Horari</a></li>                    
                   </ul>
                 </li>
                 <li><a href="/reclamations">Reclamacions</a></li>
+                <li class="has-sub"><a href="/noticies">Noticies</a>
+                  <ul>
+                    <li><a href="/noticies/crear">Crear Noticia</a></li>
+                  </ul>
+                </li>
               {% elif user.username %}
                 <li><a href='/jugadors'>Jugadors</a></li>
                 <li><a href="/sendreclamation">Enviar Reclamació</a></li>
+                <li><a href="/noticies">Noticies</li>
               {% endif %}
               {% if user.username %}            
               <li class='has-sub '><a href=''>Account</a>
@@ -83,16 +89,19 @@
             {% endif %}            
 
         </ul>
-            </nav>
-            <hr>
+        </nav>
+        
             
     </header>
+    <hr>
+
+    <h3 align="center">Titulo con efecto o animación ejemplo 1</h3>
 	{% block Tempo %}
         <p class="pos_fixed">Temps per a la competició:</p>
         <div class="pos_fixed" id="countbox1"></div>
   {% endblock %}
-  <h3>Titol Animat</h3>
-  <div id="content">
+  
+  <div id="content">  
             {% block content %}
                 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
             {% endblock %}

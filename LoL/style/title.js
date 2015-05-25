@@ -1,6 +1,6 @@
 function HeaderFader(tagName, colors)
 {
-        this.tagName = tagName; // Pass "h1" or similar.
+        this.tagName = tagName; // Pass "h3" or similar.
         this.colors = colors; // An array of colours in order.
         this.left = true; // false for right-aligned.
         this.frames = 20;
@@ -23,19 +23,19 @@ function HeaderFader(tagName, colors)
 HeaderFader.prototype.setup = function() {
         this.elements = document.getElementsByTagName(this.tagName);
         for (var h = 0; h < this.elements.length; h++) {
-                var h1 = this.elements[h],
-                        text = h1.firstChild.nodeValue;
-                h1.removeChild(h1.firstChild);
-                h1.animNodes = [];
+                var h3 = this.elements[h],
+                        text = h3.firstChild.nodeValue;
+                h3.removeChild(h3.firstChild);
+                h3.animNodes = [];
                 for (var i = 0; i < text.length; i++) {
                         var span = document.createElement('span');
                         span.appendChild(document.createTextNode(text.substring(i, i+1)));
-                        h1.appendChild(span);
-                        h1.animNodes[h1.animNodes.length] = span;
+                        h3.appendChild(span);
+                        h3.animNodes[h3.animNodes.length] = span;
                 }
-                h1.animCount = 0;
+                h3.animCount = 0;
                 var obj = this;
-                h1.animTimer = setInterval((function(hh) {
+                h3.animTimer = setInterval((function(hh) {
                         return function() {
                                 obj.animate(hh);
                         }
@@ -44,10 +44,10 @@ HeaderFader.prototype.setup = function() {
 };
 
 HeaderFader.prototype.animate = function(h) {
-        var h1 = this.elements[h], c = h1.animCount++, noAnim = 1;
-        for (var i = 0; i < h1.animNodes.length; i++) {
-                var s = h1.animNodes[i],
-                        pc = (this.left ? (c-i) : (c-(h1.animNodes.length+this.frames-i))),
+        var h3 = this.elements[h], c = h3.animCount++, noAnim = 1;
+        for (var i = 0; i < h3.animNodes.length; i++) {
+                var s = h3.animNodes[i],
+                        pc = (this.left ? (c-i) : (c-(h3.animNodes.length+this.frames-i))),
                         frac = Math.max(0, Math.min(1, pc/this.frames)),
                         marg = document.all && !window.opera ? 'marginRight' : 'marginLeft';
                 if (s.animDone) continue;
@@ -61,21 +61,21 @@ HeaderFader.prototype.animate = function(h) {
                 }
         }
         if (noAnim) {
-                clearInterval(h1.animTimer);
+                clearInterval(h3.animTimer);
         }
-        h1.style.visibility = 'inherit';
+        h3.style.visibility = 'inherit';
 };
 
 // SCRIPT SETUP
 if (document.documentElement)
 {
-        // Hide H1 elements for animation and trigger show on load.
+        // Hide h3 elements for animation and trigger show on load.
         document.write('<style type="text/css"> h3 { visibility: hidden } <\/style>');
         // Off we go!
-        var h1Anim = new HeaderFader(
+        var h3Anim = new HeaderFader(
                 'h3',
-                ['#FFFFFF','#F90A0A', '#DDDDDD','#FF0000' '#BBBBBB', '#999999', '#777777', '#555555']
+                ['#09C', '#ff2121', '#201e1e', '#4c4c4c', '#056c22', '#0721a5']
         );
-        //h1Anim.left = true; // Try setting to false if using text-align: right;
-        //h1Anim.frames = 10;
-};
+        //h3Anim.left = true; // Try setting to false if using text-align: right;
+        //h3Anim.frames = 10;
+}

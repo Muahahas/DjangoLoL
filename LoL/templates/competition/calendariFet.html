@@ -4,8 +4,14 @@
 <h1>
 	Calendari Generat
 </h1>
-<p> El calendari ha esta creat correctament</p>
-<p> S'han elaborat {{n}} lligues.
+<p class="success"> El calendari ha esta creat correctament.<br>S'han elaborat {{n}}
+{% if n == 1 %}
+ lliga.
+{% else %}
+ lligues.
+{% endif %}
+</p>
+ 
 
 <br>
 <br>

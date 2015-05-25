@@ -4,10 +4,13 @@
 <h1>
 	Jugadors
 </h1>
+{% if edited %}
+<p class="success">Els canvis s'han desat correctament.</p>
+{% endif %}
 <ul>
 	{% for item in llista %}
 	<li>Jugador: {{item}} Rol: {{ item.rol }}</li></p>
-	{% empty %} No tens cap jugador inscrit. Si ets Admin desdel recompte podras veure els jugadors de cada equip.
+	{% empty %}<p class="warning"> No tens cap jugador inscrit. Si ets Admin desdel recompte podras veure els jugadors de cada equip.</p>
 	{% endfor %}
 	{% if not user.is_staff %}
 		{% if llista.0.team.isTeamValid %}

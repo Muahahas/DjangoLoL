@@ -5,7 +5,7 @@
 <ul>
 {% for jornada in listJornades %}
 <li><a href='{% url 'competition:jornada_detail' jornada.id %}'>{{jornada}}</a>  Hora {{jornada.date}}</li>
-{% empty %} No hi ha cap comensada.
+{% empty %}<p class="info">No hi ha cap jornada comensada.</p>
 {% endfor %}
 
 {% endblock %}

@@ -5,29 +5,43 @@
 <link rel="stylesheet" href="{% static "servers.css" %}" />
 <h1> Servers </h1>
 {% if err %}
-	Sorry something was wrong.
+
+	<p class="error"> Sorry something was wrong.<br>
 	{% if err.code %}
-	 The error code is: {{err.code}}
+	 The error code is: {{err.code}}<br>
 	{% elif err.reason %}
-	 The reason is: {{err.reason}}<br>
+	 The error reason is: {{err.reason}}<br>
 	{% endif %}
 	{% if user.is_staff %}
-		{{ err }}
+	{{ err }}
 	{% endif %}
+	</p>
 {% endif %}
+<table align="center" border=”0″ cellpadding=”0″ cellspacing=”0″>
+<tr>
+<th></th>
+<th>Region:</th>
+<th>Status:</th>
+</tr>
 {% for key, value in status.items %}
+	<tr>
 	{% if value == stats.0 %}
-		&nbsp;<span class="green">&nbsp;</span>
+		<th>&nbsp;<span class="green">&nbsp;</span></th>
 	{% elif value == stats.1 %}
-		&nbsp;<span class="yellow">&nbsp;</span>
+		<th>&nbsp;<span class="yellow">&nbsp;</span></th>
 	{% elif value == stats.2 %}
-		&nbsp;<span class="red">&nbsp;</span>
+		<th>&nbsp;<span class="red">&nbsp;</span></th>
 	{% else %}
-		&nbsp;<span class="orange">&nbsp;</span>
+		<th>&nbsp;<span class="orange">&nbsp;</span></th>
 	{% endif %}
-	<b>Region:</b> {{key}} &nbsp;<b>Status:</b> {{value}}&nbsp;<br><br>
-	
+	<th>{{key}}</th>
+	<th>{{value}}</th>
+	</tr>	
 {% endfor %}
+</th>
+
+</table>
+
 
 
 <form action='/status'>		

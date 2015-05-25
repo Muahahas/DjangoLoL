@@ -125,20 +125,23 @@ def loginUser(request):
 def privado(request):
 	usuario = request.user
 	if usuario.is_staff:	
-		return render_to_response('competition/privado.html', {'usuario':usuario}, context_instance=RequestContext(request))	
+		return render_to_response('competition/privado.html', {'usuario':usuario}, context_instance=RequestContext(request))
+
 	else:
-		equip = Equip.objects.get(username__iexact = unicode(usuario.username))		
-		partida = list(Partida.objects.filter(equips=equip)[:1]).pop()
-		if partida:
-			if partida.codi == 0:
-				wait = True
-				return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'wait':wait}, context_instance=RequestContext(request))
-			elif partida.ip:
-				return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'ip':ip}, context_instance=RequestContext(request))
-			else:
-				return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
-		else:
-			return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
+		equip = Equip.objects.get(username__iexact = unicode(usuario.username))	
+		if equip.isTeamValid:	
+			partida = list(Partida.objects.filter(equips=equip)[:1]).pop()
+			if partida:
+				if partida.codi == 0:
+					wait = True
+					return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'wait':wait}, context_instance=RequestContext(request))
+				elif partida.ip:
+					return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'ip':ip}, context_instance=RequestContext(request))
+		#		else:
+		#			return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
+		#	else:
+		#		return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
+		return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
 
 
 
@@ -264,18 +267,19 @@ class recountInsc(ListView):
 
 
 @login_required(login_url='/login')
-def inscrits(request):
+def inscrits(request, edited=False):
 	if request.user.is_staff:
 		llista = []
 	else:
 		equip = Equip.objects.get(username__iexact=unicode(request.user.username))
 		llista = Jugador.objects.filter(team = equip)
-	return render_to_response('competition/jugadorsList.html',{'llista':llista}, context_instance=RequestContext(request))
+	return render_to_response('competition/jugadorsList.html',{'llista':llista,'edited':edited}, context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
 def editPlayers(request):
 	equip = Equip.objects.get(username__iexact=unicode(request.user.username))
-	llista = list(Jugador.objects.filter(team=equip))
+	jugadors = Jugador.objects.filter(team=equip)
+	llista = list(jugadors)
 	
 	if request.method=='POST':		
 		names = request.POST.getlist('name')
@@ -292,7 +296,8 @@ def editPlayers(request):
 		if isTeamValid(form_player_list):
 			players = teamSave(form_player_list)
 			Comprovacio(equip,players)
-			return HttpResponseRedirect('/jugadors')
+			return render_to_response('competition/jugadorsList.html',{'llista':jugadors,'edited':True}, context_instance=RequestContext(request))
+			#return HttpResponseRedirect('/jugadors')
 	else:
 		form_player_list = [jugadorForm(instance=llista.pop(0)) for count in xrange(5)]
 	return render_to_response('competition/equipedit.html',{'form_player_list':form_player_list}, context_instance=RequestContext(request))
@@ -431,16 +436,17 @@ def generarHoraris(request):
 		lliga.save()
 		generarJornades(item, lliga)
 		i+=1
-	#return HttpResponseRedirect('/succesfulcreated/')
 	return render_to_response('competition/calendariFet.html',{'n':i},context_instance=RequestContext(request))
 
 
 def cargaHoraris(request):
-		return render_to_response('competition/carga_horaris.html',context_instance=RequestContext(request))
+	lliguesAnteriors = list(Lliga.objects.all())
+	if Lliga.objects.all():
+		return render_to_response('competition/carga_horaris.html',{'avis':True},context_instance=RequestContext(request))
+	else:
+		return render_to_response('competition/carga_horaris.html',{'avis':False},context_instance=RequestContext(request))
 
-def horariCreat(request):
-		return render_to_response('competition/calendariFet.html',{'n':Lliga.objects.all().count()},context_instance=RequestContext(request))
-	
+
 		
 class viewCalendar(ListView):
 	queryset = Lliga.objects.all()

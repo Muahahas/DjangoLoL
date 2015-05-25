@@ -22,8 +22,9 @@
 	{% endfor %}
 	</table>
 	<br>
-{% empty %}	Encara no hi ha cap jornada acabada, per tant no hi ha cap clasifiacio.<br>
+{% empty %}<p class="warning">Encara no hi ha cap jornada acabada, per tant no hi ha cap clasifiacio.</p>
 {% endfor %}
 <br>
 <a href='/'>Enrere</a>
 {% endblock %}
+

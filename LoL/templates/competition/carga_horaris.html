@@ -8,12 +8,14 @@
             $("progress").hide();
         });
         $("#show").click(function(){
+          $("#avis").hide();
           $("#show").hide();
-          $("progress").show();
+          $("#progress").show();
           $.ajax({
             url: "/generar/",
             success: function(response) {
-              window.location.href = '/succesfulcreated'   
+              $("#progress").hide();
+              $("#created").show();   
             },
           });
         });
@@ -24,12 +26,18 @@
 {% block header %}Crear un nou horari{% endblock %}
 {% block content %}
 <h1>Generar Horaris</h1>
-
-
-<button id="show">Generate</button>
-
-<progress hidden max='70'></progress>
-<p id = "succes" hidden >CALENDARI CREAT CORRECTAMENT</p>
+{% if avis %}
+<p id="avis" class="warning">Es borraran les lligues generades.</p>
+{% endif %}
+<div align="center" id="show">
+<p class="info" align="left">Per crear un nou calendari apreta el boto.</p>
+<button>Generate</button>
+</div>
+<div id="progress" hidden align="center">
+<p class="warning" align="left"> Espereu un moment siusplau.</p>
+<progress></progress>
+</div>
+<p id="created" class="success" hidden >CALENDARI CREAT CORRECTAMENT</p>
 
 
 {% endblock %}

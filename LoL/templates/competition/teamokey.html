@@ -2,8 +2,9 @@
 {% block header %} Equip Creat Correctament {% endblock %}
 {% block content %}
 
-	<p>Has creat correctament l'equip "{{equip}}".</p> 
-	<p>Amb els jugadors:</p>
+	<p class="succes">Has creat correctament l'equip "{{equip}}".</p>
+
+	<p>Jugadors Inscrits:</p>
 	{% for item in players %}
 		<p>Jugador: {{item}} Rol: {{ item.rol }}</p>
 	{% endfor %}

@@ -4,7 +4,7 @@
 <ul>
 {% for reclamation in reclamations %}
 <li><a href='{% url 'competition:response_reclamation' reclamation.id %}'>{{reclamation}}</a></li>
-{% empty %}Encara no hi ha reclamacions.<br>
+{% empty %}<p class="info">Encara no hi ha reclamacions.<p>
 {% endfor%}
 </ul>
 {% endblock %}

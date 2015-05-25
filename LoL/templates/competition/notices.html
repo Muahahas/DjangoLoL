@@ -18,17 +18,18 @@
 <h1>
 	Ultimes Noticies
 </h1>
-
 <ul>
 	{% for noticia in llista %}
-	<li><a href="{% url 'competition:noticia_detail' noticia.id %}">{{noticia}}</a><br></li>
-	<p class="contenido">{{noticia.cosNoticia}}</p><br>
+	<li><a href="{% url 'competition:noticia_detail' noticia.id %}">{{noticia}}</a></li>
+	<p class="contenido">{{noticia.cosNoticia}}</p>
+    {% empty %}<p class="info">Encara no hi ha noticies publicades.</p>
 	{% endfor%}
 </ul>
-
+{% if user.is_staff %}
 <form action='/noticies/crear'>		
-	<br><p><input type="submit" value="Nova Noticia" /></p>
+	<p><input type="submit" value="Nova Noticia" /></p>
 </form>
+{% endif %}
 
 
 {% endblock %}
