@@ -6,8 +6,6 @@ Gestio d'una competicio de League of Legends
 
 #Models Creats:
  	TOTS
-	(Almenys atributs basics)
-	#RECORDATORI: Modificar foriegnkey de jugador a equip (es User a de ser Equip)
 
 #HTML:
 	- INDEX
@@ -34,13 +32,12 @@ Gestio d'una competicio de League of Legends
 	/privado
 	/cerrar
 	/teamregister
+	
+#Paquets a instalar:
+	dexml (Per a poder crear els XML)
+	
 <<<<<<< HEAD
   
- 
-
-
-
-
 =======
 #SPRINT Actual>
 Resolucio Reclamacio(FET)
