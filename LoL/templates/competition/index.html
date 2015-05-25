@@ -1,29 +1,44 @@
 {% extends "competition/base.html" %}
-
 {% block header %}INDEX{% endblock %}
 {% block content %}
 <h1>
-	INDEX
+	Ultimes Noticies
+</h1>
+
+<ul>
+{% for item in notices %}
+<li><a href="{% url 'competition:noticia_detail' item.id %}">{{item}}</a>
+<ul>
+<li><p class="contenido">{{item.cosNoticia}}</p></li>
+</ul>
+</li>
+{% empty %}</ul><p class="info">Encara no hi ha noticies publicades.</p><ul>
+{% endfor%}
+</ul>
+<form action="/noticies">
+<p><input type="submit" name="list" value="Totes les noticies" /></p>
+</form>
+<h1>
+	Index
 </h1>
 <ul>
-	<li><a href ='/recount'>Recompte Equips</a></li>	
-	{% if user.username %}
-	{#<li><a href='/jugadors'>Jugadors</a></li>#}
-	{% endif %}
-	<li><a href='/calendar'>Calendari</a></li>
-	{#<li><a href='/enviarmisatge'>Missatge</a></li>#}
-	<li><a href='/status'>Server status</a></li>
-	{% if user.is_staff %}
-	{#<li><a href='/generar'>Crear Horari</a></li>#}
-	<li><a href='/reclamations'>Reclamations</a></li>
-	{% elif user.username %}
-	<li><a href="/sendreclamation">Reclamacio</a></li>
-	{% endif %}	
-	{#<li><a href="/jornades">Proximes Jornades</a></li>#}
-	{#<li><a href='/jornadesC'>Jornades Comensades</a></li>#}
-	<li><a href="/classificacio">Classificacio</a></li>
-	<li><a href="/noticies">Noticies</a></li>
-	
-	
+{% if user.username %}
+<li><a href ='/recount'>Recompte Equips</a></li>
+<li><a href='/calendar'>Calendari</a></li>
+<li><a href="/classificacio">Classificacio</a></li>
+<li><a href="/status">Server Status</a></li>
+{% if not user.is_staff%}
+<li><a href="/sendreclamation">Enviar Reclamacio</a></li>
+{% endif %}
+{% else %}
+<li><a href='/calendar'>Calendari</a></li>
+<li><a href="/classificacio">Classificacio</a></li>
+{% endif %}
+<li><a href="/noticies">Noticies</a></li>
+{% if user.is_staff %}
+<li><a href="{% url 'competition:create' %}">Crear Horari</a></li>
+<li><a href='/reclamations'>Reclamations</a></li>
+<li><a href="/menuJornades">Jornades</a></li>
+{% endif %}
 </ul>
 {% endblock %}

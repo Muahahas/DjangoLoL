@@ -123,6 +123,7 @@ class reclamacioResposta(ModelForm):
 
 
 class noticiaForm(ModelForm):
+	cosNoticia = forms.CharField(label=("Cos de la noticia:"), max_length=400, widget=forms.Textarea)
 	class Meta:
 		model = Noticia
 		exclude = ['date']

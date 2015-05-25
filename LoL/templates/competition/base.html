@@ -7,6 +7,36 @@
     <link rel="stylesheet" href="{% static "fixpos.css" %}" />
     <link rel="stylesheet" href="{% static "base.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "messages.css"%}"/>
+    <link rel="stylesheet" href="{% static "contenido.css" %}" />
+    <style type="text/css"> 
+         footer {
+
+            position: fixed;
+
+            /* Altura total del footer en px con valor negativo */
+
+            bottom:0px;
+
+            /* Altura del footer en px. Se han restado los 5px del margen
+
+               superior mas los 5px del margen inferior
+
+            */
+            width: 98%;
+            height: 40px;
+            border-right: 5px;
+            padding:5px 5px;
+
+            clear: both;
+
+            background: #286af0;
+
+            text-align: center;
+
+            color: #fff;
+
+        }</style>
+
     {% block cssjs %}{% endblock %}         
     <title>{% block title %}LOL{% endblock %}</title>
     </head>
@@ -16,81 +46,70 @@
           <ul>
             <li class='active'><a href='/'>Inicio</a></li>
               {% if user.is_staff %}
-                <li class='has-sub '><a href="">Admin</a>
+                <li class='has-sub'><a href="">Admin</a>
                   <ul>
                     <li><a href='/admin'>Super Admin Mode</a></li>
-                    <li><a href="">Jornades</a>
-                      <ul>
-                        <li><a href="/jornades">Proximes Jornades</a></li>
-                        <li><a href='/jornadesC'>Jornades Comensades</a></li>
-                      </ul>
-                    </li>
                     <li><a href="{% url 'competition:create' %}">Crear Horari</a></li>                    
                   </ul>
                 </li>
                 <li><a href="/reclamations">Reclamacions</a></li>
-                <li class="has-sub"><a href="/noticies">Noticies</a>
+                <li class='has-sub'><a href="/noticies">Noticies</a>
                   <ul>
                     <li><a href="/noticies/crear">Crear Noticia</a></li>
                   </ul>
                 </li>
-              {% elif user.username %}
+                <li class='has-sub'><a href="">Competicio</a>
+                <ul>
+                    <li><a href ='/recount'>Recompte Equips</a></li>
+                    <li><a href='/calendar'>Calendari</a></li>
+                    <li class="has-sub"><a href="/menuJornades">Jornades</a>
+                      <ul>
+                        <li><a href="/jornades">Proximes Jornades</a></li>
+                        <li><a href='/jornadesC'>Jornades Comensades</a></li>
+                      </ul>
+                    </li> 
+                    <li><a href="/classificacio">Classificacio</a></li>
+                    <li><a href='/status'>Server status</a></li>
+                </ul>
+                </li>
+               {% elif user.username %}
                 <li><a href='/jugadors'>Jugadors</a></li>
                 <li><a href="/sendreclamation">Enviar Reclamació</a></li>
-                <li><a href="/noticies">Noticies</li>
+                <li><a href="/noticies">Noticies</a></li>
+                <li class='has-sub'><a href="">Competicio</a>
+                <ul>
+                    <li><a href ='/recount'>Recompte Equips</a></li>
+                    <li><a href='/calendar'>Calendari</a></li>
+                    <li><a href="/classificacio">Classificacio</a></li>
+                    <li><a href='/status'>Server status</a></li>
+                </ul>
+                </li>
               {% endif %}
-              {% if user.username %}            
-              <li class='has-sub '><a href=''>Account</a>
-                <ul>                    
+              {% if user.username %}
+              <li class='has-sub'><a href="">Account</a>
+              <ul>                    
                   <li><a href='/privado'>Panel Privado</a></li>
                   <li><a href='/cerrar'>Logout</a></li>
-                </ul>
+              </ul>
               </li>
-            {% else %}
+              {% else %}
+              <li><a href="/noticies">Noticies</a></li>
+              
+              <li class='has-sub'><a href="">Competicio</a>
+                <ul>
+                    <li><a href ='/recount'>Recompte Equips</a></li>
+                    <li><a href='/calendar'>Calendari</a></li>
+                    <li><a href="/classificacio">Classificacio</a></li>
+                </ul>
+                </li>
               <li><a href='/login'>Login</a></li>
               <li><a href='/teamregister'>Registrar equip</a></li>
             {% endif %}
-             <li class='has-sub '><a href='#'>Products</a>
-                <ul>
-                   <li class='has-sub '><a href='#'>Product 1</a>
-                      <ul>
-                         <li><a href='#'>Sub Item</a></li>
-                         <li><a href='#'>Sub Item</a></li>
-                      </ul>
-                   </li>
-                   <li class='has-sub '><a href='#'>Product 2</a>
-                      <ul>
-                         <li><a href='#'>Sub Item</a></li>
-                         <li><a href='#'>Sub Item</a></li>
-                      </ul>
-                   </li>
-                </ul>
-             </li>
-             <li><a href='#'>About</a></li>
-             <li><a href='#'>Contact</a></li>
           </ul>
         </div> 
         {% block header %}
         {% endblock %} 
-        <nav>
-        <ul id='menu'>
-            <!--<li><a href='/register'>Registro</a></li>-->
-            <li><a href='/'>Inicio</a></li>
-            {% if user.is_staff %}
-            <li><a href='/admin'>Super Admin Mode</a></li>
-            <li><a href='/privado'>Panel Privado</a></li>
-            <li><a href='/cerrar'>Logout</a></li>
-            {% elif user.username %}
-            <li><a href='/privado'>Panel Privado</a></li>          
-            <li><a href='/cerrar'>Logout</a></li>
-            {% else %}
-            <li><a href='/teamregister'>Registrar equip</a></li>
-            <li><a href='/login'>Login</a></li>
-            {% endif %}            
-
-        </ul>
-        </nav>
-        
+              
             
     </header>
     <hr>
@@ -100,6 +119,9 @@
         <p class="pos_fixed">Temps per a la competició:</p>
         <div class="pos_fixed" id="countbox1"></div>
   {% endblock %}
+  {% if not user.username%}
+<p class="warning">No has iniciat sessio, pots iniciar-ne una <a href="/login">aqui</a> o registrar-te <a href="/teamregister">aqui.</a></p>
+{% endif %}
   
   <div id="content">  
             {% block content %}
@@ -108,6 +130,7 @@
   </div>
 
         <div id="footer">
+        <footer><p><a href="">Contenido</a>   <a>del</a> pie de página</p></footer>        
             {% block footer %}{% endblock %}
         </div>
 

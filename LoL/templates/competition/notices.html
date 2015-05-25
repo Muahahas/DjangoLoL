@@ -1,28 +1,15 @@
 {% extends "competition/base.html" %}
 {% block header %}Noticies{% endblock %}
-{% block content %}
-    <style>
-        .contenido {
-
-            width:400px;
-
-            overflow:hidden; /* Escondemos la parte sobrante */
-
-            white-space:nowrap; /* Indicamos que no realice salto de linea si no cabe en la anchura indicada */
-
-            text-overflow: ellipsis; /* Ponemos los dos puntos */
-
-        }
-
-    </style>
+{% block content %}  
 <h1>
 	Ultimes Noticies
 </h1>
 <ul>
 	{% for noticia in llista %}
-	<li><a href="{% url 'competition:noticia_detail' noticia.id %}">{{noticia}}</a></li>
-	<p class="contenido">{{noticia.cosNoticia}}</p>
-    {% empty %}<p class="info">Encara no hi ha noticies publicades.</p>
+	<li><a href="{% url 'competition:noticia_detail' noticia.id %}">{{noticia}}</a>
+    <ul><li><p class="contenido">{{noticia.cosNoticia}}</p></li></ul></li>
+	
+    {% empty %}</ul><p class="info">Encara no hi ha noticies publicades.</p><ul>
 	{% endfor%}
 </ul>
 {% if user.is_staff %}

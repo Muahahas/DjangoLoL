@@ -18,8 +18,6 @@ import string
 import urllib2
 import random
 
-
-
 from itertools import izip
 import math
 import decimal
@@ -97,7 +95,8 @@ def Comprovacio(equip, players):
 
 class indexView(ListView):
 	template_name = 'competition/index.html'
-	queryset=Equip.objects.all()
+	queryset=Noticia.objects.all().order_by('date')[:3]
+	context_object_name='notices'
 
 def loginUser(request):
 	if not request.user.is_anonymous():
@@ -545,6 +544,9 @@ class jornadesComensades(ListView):
 	context_object_name = 'listJornades'
 	template_name = 'competition/jornades_listC.html'
 
+def menuJornades(request):
+	return render_to_response('competition/menu_jornades.html')
+
 def getTeamsWaiting(journey):
 	partides = Partida.objects.filter(jornada=journey)
 	llistaEquips = []
@@ -785,14 +787,13 @@ class noticiesDetail(DetailView):
 	def get_context_data(self, **kwargs):
 		context = super(noticiesDetail,self).get_context_data(**kwargs)
 		return context
-
+@login_required(login_url='/login')
 def enviarNoticia(request):
 	if request.method == 'POST':
 		formulario = noticiaForm(request.POST, request.FILES)
 		if formulario.is_valid():
 			formulario.save()
-			return HttpResponseRedirect('/noticies')
+			return render_to_response('competition/noticia_succes.html',context_instance=RequestContext(request))
 	else:
 		formulario = noticiaForm()
 	return render_to_response('competition/noticia_form.html',{'formulario':formulario},context_instance=RequestContext(request))
-		

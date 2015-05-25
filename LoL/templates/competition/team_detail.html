@@ -14,10 +14,10 @@
 </br>
 <form action="{% url 'competition:validate_team' equip.id %}">
 {% if equip.isTeamValid %}
-<p>L'equip esta validat!</p>
+<p class="success">L'equip esta validat!</p>
 <input type="submit" name="list" value="Desvalidate" />
 {% else %}
-<p>L'equip encara esta pendent d'activar.</p>
+<p class="info">L'equip encara esta pendent d'activar.</p>
 <p><input type="submit" name="list" value="Validate" /></p>
 {% endif %}
 </form>
