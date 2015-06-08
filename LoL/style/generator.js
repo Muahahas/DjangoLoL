@@ -1,12 +1,15 @@
-
-      $(document).ready(function(){
+$(document).ready(function(){
         $("#show").click(function(){
-          $("#show").hide();
-          $("progress").show();
+          $("#avis").hide();
+          $("#show").hide();          
+          $("#wait").slideToggle("fast");
+          $("#progress").show()
           $.ajax({
             url: "/generar/",
             success: function(response) {
-              window.location.href = '/succesfulcreated'   
+              $("#wait").hide();
+              $("#progress").hide();
+              $("#created").slideToggle("fast");
             },
           });
         });

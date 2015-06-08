@@ -3,24 +3,34 @@
 {% block content %}
 {% for item in clasification %}
 	<h2>{{item}}</h2><br>
-	<table border=”0″ cellpadding=”0″ cellspacing=”0″>
-	<tr>
-	<th>Posicio</th>
-	<th>Equip</th>
-	<th>Punts</th>
-	</tr>
+	
+
 	{% for position in positions %}
 		{% if position.0.0.clas == item %}
-			{% for pos in position %}
-				<tr>
-				<th>{{pos.1}}</th>
-				<th>{{pos.0.equip}}</th>
-				<th>{{pos.0.points}}</th>
-				</tr>
-			{% endfor %}
+				{% if item.league.finished %}
+					<h3>Lliga acabada, guanyadors:</h3>
+					<p style="color:green">Primer: {{position.0.0.equip}}</p>
+					<p style="color:green">Segon: {{position.1.0.equip}}</p>
+					<p style="color:green">Tercer: {{position.2.0.equip}}</p>
+				{% endif %}
+	
+			<table border=”0″ cellpadding=”0″ cellspacing=”0″>
+			<tr>
+				<th>Posicio</th>
+				<th>Equip</th>
+				<th>Punts</th>
+			</tr>
+				{% for pos in position %}
+					<tr>
+					<th>{{pos.1}}</th>
+					<th>{{pos.0.equip}}</th>
+					<th>{{pos.0.points}}</th>
+					</tr>
+				{% endfor %}
+			</table>
 		{% endif %}
 	{% endfor %}
-	</table>
+	
 	<br>
 {% empty %}<p class="warning">Encara no hi ha cap jornada acabada, per tant no hi ha cap clasifiacio.</p>
 {% endfor %}

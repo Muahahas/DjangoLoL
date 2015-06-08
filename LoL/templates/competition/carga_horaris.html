@@ -1,26 +1,6 @@
 {% extends "competition/base.html" %}
 {% load staticfiles %}
-{% block cssjs %}
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script>
-      $(document).ready(function(){
-        $("#hide").click(function(){
-            $("progress").hide();
-        });
-        $("#show").click(function(){
-          $("#avis").hide();
-          $("#show").hide();
-          $("#progress").show();
-          $.ajax({
-            url: "/generar/",
-            success: function(response) {
-              $("#progress").hide();
-              $("#created").show();   
-            },
-          });
-        });
-      });
-    </script>
+{% block cssjs %}<script type="text/javascript" src="{% static "generator.js" %}"></script> 
 {% endblock %}
 
 {% block header %}Crear un nou horari{% endblock %}
@@ -33,11 +13,11 @@
 <p class="info" align="left">Per crear un nou calendari apreta el boto.</p>
 <button>Generate</button>
 </div>
+<p id="wait" hidden class="warning" align="left"> Espereu un moment siusplau.</p>
 <div id="progress" hidden align="center">
-<p class="warning" align="left"> Espereu un moment siusplau.</p>
 <progress></progress>
 </div>
-<p id="created" class="success" hidden >CALENDARI CREAT CORRECTAMENT</p>
+<p  id="created" class="success" hidden> El calendari ha esta creat correctament.</p>
 
 
 {% endblock %}

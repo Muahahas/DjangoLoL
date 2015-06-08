@@ -36,9 +36,8 @@ class ConnegResponseMixin(TemplateResponseMixin):
 
     def render_xml_object_response(self, objects, **kwargs):
     	if objects[0].__class__ == Lliga:
-    		object_list = Jornada.objects.filter(league=objects[0])
-    		objects = objects + list(object_list)
-    		xml_data = serializers.serialize(u"xml", objects, **kwargs)
+    		lliga_xml = LligaXML(objects[0])
+    		xml_data = lliga_xml.render()
     		
     	elif objects[0].__class__ == Equip:
     		team_xml = EquipXML(objects[0])
@@ -61,6 +60,13 @@ class ConnegResponseMixin(TemplateResponseMixin):
 class jugadorComprovacio():
 		nom=""
 		email=""
+		top = ""
+
+def isTop(player):
+	if not player.top:
+		player.isTop()
+
+
 
 def Comprovacio(equip, players):
 	json_file = 'jugadors.json'
@@ -72,19 +78,21 @@ def Comprovacio(equip, players):
    	for i in range(len(data["jugadors"])):
    		juga.nom=data["jugadors"][i]["nom"]
    		juga.email=data["jugadors"][i]["correu"]
+   		juga.top = data["jugadors"][i]["Top"]
    		listjugadors.append(juga)
    		juga = jugadorComprovacio()
 	a = True
 	for item in players:
-		b = False
+		b = False				
 		for player in listjugadors:
 			print player.nom, player.email
 			print item.name, item.email
 			if item.name == player.nom and item.email == player.email:
+				print player.top
+				if player.top == "True":
+					isTop(item)
 				b = True
-		print b	
-		a = a and b
-		print a
+		a = a and b		
 
 	if a:
 		equip.validat()
@@ -128,18 +136,19 @@ def privado(request):
 
 	else:
 		equip = Equip.objects.get(username__iexact = unicode(usuario.username))	
-		if equip.isTeamValid:	
-			partida = list(Partida.objects.filter(equips=equip)[:1]).pop()
+		if equip.isTeamValid:			
+			partida = list(Partida.objects.filter(equips=equip)[:1])
 			if partida:
-				if partida.codi == 0:
+				match = partida.pop()
+				if match.codi == 0:
 					wait = True
 					return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'wait':wait}, context_instance=RequestContext(request))
-				elif partida.ip:
-					return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'ip':ip}, context_instance=RequestContext(request))
+				elif match.ip:
+					return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'ip':match.ip}, context_instance=RequestContext(request))
 		#		else:
 		#			return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
-		#	else:
-		#		return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
+			else:
+				return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip,'noMatch':True}, context_instance=RequestContext(request))
 		return render_to_response('competition/privado.html', {'usuario':usuario,'equip':equip}, context_instance=RequestContext(request))
 
 
@@ -149,24 +158,28 @@ def cerrar(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
-def isRolAndNameValid(list,n):
+def isRolAndNameValid(lista,n):
 	a = True
-	if n == len(list):
+	if n == len(lista):
 		return a
-	for item in list[n+1:]:
-		a = a and item.name != list[n].name and item.rol != list[n].rol
-	return a and isRolAndNameValid(list,n+1)
+	else:
+		for item in lista[n+1:]:
+			a = a and item.fields['rol'] != lista[n].fields['rol']
+	if a:
+		return a and isRolAndNameValid(lista,n+1)
+	else:
+		return a
 
 
-def isTeamValid(list):
+def isTeamValid(lista):
 	a = True
-	for item in list:
+	for item in lista:
 		a = a and item.is_valid()
-	return a
+	return a #and isRolAndNameValid(lista,0)
 
-def teamSave(list):
+def teamSave(lista):
 	 listP = []
-	 for item in list:
+	 for item in lista:
 	 	player = item.save()
 	 	listP.append(player)
 	 return listP
@@ -306,7 +319,7 @@ def editPlayers(request):
 
 
 
-class  teamDetail(DetailView, ConnegResponseMixin):
+class teamDetail(DetailView, ConnegResponseMixin):
 	model = Equip
 	template_name = 'competition/team_detail.html'
 
@@ -545,7 +558,7 @@ class jornadesComensades(ListView):
 	template_name = 'competition/jornades_listC.html'
 
 def menuJornades(request):
-	return render_to_response('competition/menu_jornades.html')
+	return render_to_response('competition/menu_jornades.html',context_instance=RequestContext(request))
 
 def getTeamsWaiting(journey):
 	partides = Partida.objects.filter(jornada=journey)
@@ -571,6 +584,7 @@ def asignIP(teams):
 		if not jsonIP:
 			ERR = True
 		data = json.load(jsonIP)
+		print data
 		partida = list(Partida.objects.filter(equips=team1).filter(equips=team2)).pop()
 		#match = Partida.objects.get(id=partida.id)
 		ip = "%s" % data['generated-ip']
@@ -587,6 +601,9 @@ def asignIP(teams):
 def createResults(journey):
 	partides = Partida.objects.filter(jornada=journey)
 	for partida in partides:
+		r = Resultat.objects.filter(partida=partida)
+		if(r):
+			r.delete()
 		result = Resultat()
 		result.partida = partida
 		if partida.codi > 0:
@@ -676,8 +693,15 @@ def sendInfo(journey):
 	clasification = Classificacio.objects.get(league=journey.league)
 	partides = list(Partida.objects.filter(jornada=journey))
 	results = [Resultat.objects.get(partida=partida) for partida in partides]
+	resultsXML = [ResultXML(item) for item in results]
+	classXML = ClassificacioXML(clasification)
+
 	username = "ebm7@alumnes.udl.cat"
-	body_text = serializers.serialize(u"xml", [clasification]+partides+results) ##Arreglar XML
+
+	body_text = classXML.render()
+	for item in resultsXML:
+		body_text = body_text + item.render()
+	
 	toaddrs = []
 	toaddrs.append("eloibuisan@gmail.com")
 	toaddrs.append("riot@lol.com")
@@ -709,6 +733,8 @@ def finishJourney(request, pk):
 	sendInfo(journey)	
 	if journey.iniciada and not journey.acabada:
 		journey.finish()
+	if pk+1 == Jornada.objects.filter(league=journey.league).count():
+		journey.league.finish()
 	return HttpResponseRedirect('/jornades/%s/' % (pk))
 
 
@@ -797,3 +823,9 @@ def enviarNoticia(request):
 	else:
 		formulario = noticiaForm()
 	return render_to_response('competition/noticia_form.html',{'formulario':formulario},context_instance=RequestContext(request))
+
+class Top25(ListView):
+	model = Jugador
+	queryset = Jugador.objects.filter(top=True)[:25]
+	context_object_name = 'players'
+	template_name = 'competition/top25.html'

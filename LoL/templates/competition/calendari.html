@@ -1,13 +1,22 @@
 {% extends "competition/base.html" %}
 {% block header %}Horaris{% endblock %}
 {% block content %}
-
+	<ul>
 	{% for lliga in list %}
-		<h2><a href="{% url 'competition:league_detail' lliga.id %}">{{lliga}}</a></h2>
+		<li><h2><a href="{% url 'competition:league_detail' lliga.id %}">{{lliga}}</a></h2></li>
+		<ul>
+			{% for item in lliga.jornada_set.all %}
+			<li>{{item}}</li>
+			{% endfor %}
+
+		</ul>
+			
 	{% endfor %}
+	</ul>
 	<br>
 	<br>
-	<a href='/'>Enrere</a>
+	<a href='/'>Enrere</a><br>	
+	<input type="button" onclick="history.back()" name="volver atrás" value="volver atrás">
 
 
 

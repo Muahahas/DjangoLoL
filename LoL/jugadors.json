@@ -1,9 +1,9 @@
 {
  "jugadors":[
-	    {"nom": "Tom","correu": "Cruise@gmail.com"},
-	    {"nom": "Maria","correu": "Sharapova@gmail.com"},
-	    {"nom": "James","correu": "Bond@gmail.com"},
-	    {"nom": "Jamess","correu": "Bondd@gmail.com"},
-	    {"nom": "Jamesss","correu": "Bonddd@gmail.com"}
+	    {"nom": "Tom","correu": "Cruise@gmail.com","Top":"True"},
+	    {"nom": "Maria","correu": "Sharapova@gmail.com","Top":"True"},
+	    {"nom": "James","correu": "Bond@gmail.com","Top":"False"},
+	    {"nom": "Jamess","correu": "Bondd@gmail.com","Top":"True"},
+	    {"nom": "Jamesss","correu": "Bonddd@gmail.com","Top":"False"}
 	    ]
 	}

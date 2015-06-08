@@ -12,7 +12,7 @@
 				<li>{{partida}}{% if partida.iniciada %}<input type="submit" name="list" value="Finish" />
 				{% endif %}</li></form>	
 				<ul>
-				<li>{{partida.equips.all.0 }}  VS. {{ partida.equips.all.1}}{% if not partida.equips.all.0.isReady and not partida.equips.all.1.isReady and not partida.acabada %}<script type="text/javascript" > var a = true </script> Els equips encara no estan preparats. {% endif %}</li>
+				<li>{{partida.equips.all.0 }}  VS. {{ partida.equips.all.1}}{% if partida.acabada%} La partida s'ha acabat{% elif not partida.equips.all.0.isReady or not partida.equips.all.1.isReady %} Els equips encara no estan preparats. {% endif %}</li>
 				</ul>
 			{% endif %}				
 	{% endfor %}

@@ -6,19 +6,26 @@
 	<p>Eres miembro desde el {{usuario.date_joined}}</p>
 	{% if not user.is_staff %}
 		{% if not equip.isTeamValid %}
-			<p>L'equip encara esta pendent de validar-se<p>
+			<p class="error">L'equip encara esta pendent de validar-se<p>
 		{% else %}
-			<p>L'equip esta validat per tant podra jugar a la competició</p>
+			<p class="success">L'equip esta validat per tant podra jugar a la competició</p><br>
 			{% if wait %}
-			L'equip descansa aquesta jornada<br>
+			<p class="info">L'equip descansa aquesta jornada</p>
+			{% elif noMatch %}
+			<p class="warning">L'equip no esta al horari espera que s'en generi un altre</p>
 			{% else %}
 			{% if not equip.isReady %}
 			<form action="{% url 'competition:team_ready' equip.id %}" >		
 				<br><p><input type="submit" value="Ready" /></p>
+
 			</form>
+			<a href="{% url 'competition:team_ready' equip.id %}" class="ready">Ready</a>
 			{% elif equip.isReady %}
 				{% if ip %}
-					IP:{{ip}}<br>
+				
+					<p class="ip" >IP assignada per la proxima partida:{{ip}}</p>			
+				
+			
 				{% else %}
 				Encara no tens ip assignada recarga en uns moments per comprovar si ja esta asignada.<br><br>
 				<form action='/privado'>		

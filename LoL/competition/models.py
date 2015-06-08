@@ -42,10 +42,14 @@ class Jugador(models.Model):
 	]
 
 	name = models.CharField(max_length=50)
-	rol =  models.CharField(max_length=3, choices=ROL_CHOICES)
+	rol =  models.CharField(max_length=3, blank=False,choices=ROL_CHOICES)
 	top = models.BooleanField(default=False)
 	team = models.ForeignKey(Equip)
 	email = models.EmailField()#unique=True)
+	
+	def isTop(self):
+		self.top = True
+		self.save()
 
 	def __unicode__(self):
 		return u"%s" % self.name
@@ -80,6 +84,11 @@ class EquipXML(dexml.Model):
 class Lliga(models.Model):
 	codi = models.IntegerField(default=0)
 	equips = models.ManyToManyField(Equip)
+	finished = models.BooleanField(default=False)
+
+	def finish(self):		
+		self.finished = True
+		self.save()
 
 	def __unicode__(self):
 		return u'Lliga n %d' % (self.codi)
@@ -141,6 +150,44 @@ class Partida(models.Model):
 	def __unicode__(self):
 		return u'Partida n %d de la %s' % (self.codi, self.jornada)
 
+class PartidaXML(dexml.Model):
+	codi = fields.Integer()
+	ip = fields.String()
+	equips = fields.List(Equip)
+	def __init__(self, match):
+		self.codi = match.codi
+		self.ip = match.ip
+		for item in match.equips.all():
+			self.equips.append(EquipXML(item))
+
+
+
+
+class JornadaXML(dexml.Model):
+	codi = fields.Integer()
+	date = fields.String()
+	partides = fields.List(Partida)
+	
+
+	def __init__(self, jornada):
+		self.codi = jornada.codi
+		self.date = jornada.date
+		for item in Partida.objects.filter(jornada=jornada):
+			self.partides.append(PartidaXML(item))
+
+
+class LligaXML(dexml.Model):
+	codi = fields.String()
+	jornades = fields.List(Jornada)	
+
+	def __init__(self, lliga):
+		self.codi = lliga.codi
+		for item in Jornada.objects.filter(league=lliga):
+			self.jornades.append(JornadaXML(item))
+
+
+
+
 class Estadistiques(models.Model):
 	mortsEquip = models.IntegerField(default=0)
 	killsEquip = models.IntegerField(default=0)
@@ -173,7 +220,7 @@ class Classificacio(models.Model):
 	league = models.OneToOneField(Lliga)
 
 	def __unicode__(self):
-		return u'Classificacio de la lliga: n %d' % self.league.codi 
+		return u'Classificacio de la lliga: n %d' % self.league.codi
 	
 
 class EquipPosition(models.Model):
@@ -186,6 +233,50 @@ class EquipPosition(models.Model):
 
 	def __unicode__(self):
 		return u'%s          Points: %d' % (self.equip,self.points)
+
+class EquipPositionXML(dexml.Model):
+	points = fields.Integer()
+	equip = fields.String()
+
+	def __init__(self,position):
+		self.points = position.points
+		self.equip = position.equip.username
+
+
+class ClassificacioXML(dexml.Model):
+	lliga = fields.String()
+	positions = fields.List(EquipPosition)
+
+	def __init__ (self, classificacio):
+		self.lliga =u'Lliga num %d.' % classificacio.league.codi
+		for item in EquipPosition.objects.filter(clas=classificacio):
+			self.positions.append(EquipPositionXML(item))
+
+class ResultXML(dexml.Model):
+	mortsEquipA = fields.Integer()
+	killsEquipA = fields.Integer()
+	assistEquipA = fields.Integer()
+
+	mortsEquipB = fields.Integer()
+	killsEquipB = fields.Integer()
+	assistEquipB = fields.Integer()
+
+	winner = fields.Integer()
+
+	partida = fields.String()
+
+	def __init__ (self, result):
+		self.mortsEquipA = result.mortsEquipA
+		self.killsEquipA = result.killsEquipA
+		self.assistEquipA = result.assistEquipA
+		self.mortsEquipB = result.mortsEquipB
+		self.killsEquipB = result.killsEquipB
+		self.assistEquipB = result.assistEquipB
+
+		self.winner = result.winner
+
+		self.partida = u'Partida num %d' % result.partida.codi
+
 
 
 class Reclamacio(models.Model):

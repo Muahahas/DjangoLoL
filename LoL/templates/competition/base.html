@@ -2,41 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script type="text/javascript" src="{% static "title.js" %}"></script>
     <script type="text/javascript" src="{% static "countdown.js" %}"></script>    
     <link rel="stylesheet" href="{% static "fixpos.css" %}" />
     <link rel="stylesheet" href="{% static "base.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "messages.css"%}"/>
     <link rel="stylesheet" href="{% static "contenido.css" %}" />
-    <style type="text/css"> 
-         footer {
-
-            position: fixed;
-
-            /* Altura total del footer en px con valor negativo */
-
-            bottom:0px;
-
-            /* Altura del footer en px. Se han restado los 5px del margen
-
-               superior mas los 5px del margen inferior
-
-            */
-            width: 98%;
-            height: 40px;
-            border-right: 5px;
-            padding:5px 5px;
-
-            clear: both;
-
-            background: #286af0;
-
-            text-align: center;
-
-            color: #fff;
-
-        }</style>
-
+    <link rel="stylesheet" href="{% static "toTop.css" %}" />
+    <script type="text/javascript" src="{% static "totop.js" %}"></script>
+   
     {% block cssjs %}{% endblock %}         
     <title>{% block title %}LOL{% endblock %}</title>
     </head>
@@ -86,6 +61,7 @@
                 </li>
               {% endif %}
               {% if user.username %}
+              <li><a href="/top25">Top25</a></li>
               <li class='has-sub'><a href="">Account</a>
               <ul>                    
                   <li><a href='/privado'>Panel Privado</a></li>
@@ -113,7 +89,7 @@
             
     </header>
     <hr>
-
+    <span class="ir-arriba"></span>
     <h3 align="center">Titulo con efecto o animación ejemplo 1</h3>
 	{% block Tempo %}
         <p class="pos_fixed">Temps per a la competició:</p>
@@ -129,10 +105,10 @@
             {% endblock %}
   </div>
 
-        <div id="footer">
-        <footer><p><a href="">Contenido</a>   <a>del</a> pie de página</p></footer>        
+
+
+        <div id="footer">             
             {% block footer %}{% endblock %}
         </div>
-
     </body>
 </html>

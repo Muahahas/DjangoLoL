@@ -1,0 +1,11 @@
+{% extends 'competition/base.html' %}
+{% block header %}Top 25{% endblock %}
+{% block content%}
+	<ul>
+	{% for player in players %}
+		<li>{{player}}</li>		
+	{% empty %}<p> Encara no hi ha cap jugador TOP registrat.</p>
+	{% endfor %}
+	</ul>
+
+{% endblock %}
